@@ -1,0 +1,109 @@
+Vasily Souzdenkov
+Gilbert, AZ, 85295	510.458.6778
+www.linkedin.com/in/vasilysouzdenkov/	vasily.souzdenkov@gmail.com
+Masters of Science, Business Analytics - ASU School of Engineering
+
+Marketing Manager
+Focused on data-driven demand generation & user acquisition marketing
+Experienced marketing leader (of 15 Years) with expertise crafting strategic roadmaps and frameworks for data-driven initiatives. Adept at managing and mentoring teams, fostering creative problem-solving environments - including being a hands-on contributor for the team.
+Innovative conceptual thinker with proven analytical and problem-solving skills, distilling complex information into easily understandable insights. Cross-functional expertise in growth and marketing, driving strategies for end-to-end customer journeys, including acquisition, activation, retention, revenue, and referral touch points.
+Leadership in marketing analytics, utilizing advanced techniques in a/b testing, attribution modeling, ROI optimization, and forecasting.
+
+Professional Experience
+Growth Analytics, Solutions Developer
+Growthstyr
+Remote	2022 - Present
+Companies: Shopify (SaaS: B2B:  Enterprise), Course Hero (EdTech: B2C Series C), Mesh (FinTech: B2C2B: Seed), Delphia (FinTech: B2C: Seed), Smart News (News: B2C: Series F), NewsBreak (News: B2C: Series C),
+Haystack News (News: B2C: Seed), MyAlly (SaaS: Recruiting: B2B: Seed), Joy Inc. (Weddings: B2C: Series B)
+Enhanced SEO through comprehensive strategies, including content development, branding, and PR (backlink acquisition), technical optimization, and information architecture improvements.
+(Joy Inc.) Results: Improved core keyword ‘wedding websites’ (33K monthly searches) to position 1 in search results (Google) within 6 months; increasing daily conversions from 25 to 185 accounting for 640% of total segment acquisition
+(Joy Inc.) Result: Collaborated with the content development and PR team to create data-driven linkable assets to appeal to journalists resulting in backlink growth on our core landing page from 0 to 150 in 12 months
+(NewsBreak) Results: improve the top 10% of the primary keywords from 11.2 to 4 in the span of 3 months with a correlated increase of backlinks from 289 to 3,552 during the span of 60 days from developing linkable assets, relationship building, and partnerships with journalists
+Improved site navigation and linking structures to elevate organic search performance and user engagement.
+(NewsBreak) Results: Created information taxonomy and structure to optimize internally links between pages (navigation) and the page’s content using dynamic implementation at scale; helping achieve an SEO traffic increase of 312% in 6 months from 850K to 2.6M
+Led A/B testing initiatives to optimize user experience (UI) and increase conversion rates, while implementing advanced analytics for data-driven decision-making.
+(Shopify) Results: Increased avg. landing page conversion rates by 21.6% Q/Q
+(Course Hero) Results: Increased avg. conversion rates in funnel by 36.8% Y/Y using acquisition, user segmentation, and funnel optimization
+
+Senior Group Manager, Growth & Acquisition
+Adobe
+Remote	2019 - 2022
+
+Growth Analytics & Data Engineering - managed and implemented analytical solutions for growth and SEO strategies based on data-driven frameworks, working to establish data visualization and reporting tools to enable monitoring, measurement, analysis, and actionable insights; including data mining, ETL pipelines, large, complex data analysis using Python and SQL
+Result - withJoy: improved within 3 months the average. position of “wedding websites” from position 12 to 1 increasing total new members daily by 225% YoY through content strategy adjustments, media & PR optimization, and split testing funnels
+Coaching & Collaboration - providing analysis and presenting findings to help teams distill actionable insights through:
+Data-driven analysis and utilize best practices when working cross-functionally with related departments such as product, design, and engineering
+Development of  intuitive dashboards for key stakeholders, presenting key findings, actionable recommendations, and strategic roadmaps, investments, and forecasting
+Optimization & Actionable Insights - built and analyzed data sets to discover and implement broad strategy and targeted optimizations for improving specific OKRs
+Result - News Break: saw their SEO traffic (from 45M pages)increase from ~850K to ~2.5M visitors within 3 months of launching our taxonomy and architectural optimizations; while our search ad optimization strategy yielded 2x app installs daily while decreasing avg. CPI from ~$3.25 to ~$1.80 using localization
+Management & Leadership - created custom frameworks for strategic management focused on core search optimization factors such as content strategy & optimization, architecture & linking frameworks, content distribution & backlinks, and technical optimization
+Result - Course Hero: improved 30-day indexation from 40% to 88% within 6 months, reduced index bloat by 35% without impacting performance
+Growth & Performance Marketing - integrated paid digital campaigns, with attribution models, measurement, and forecasting, including optimization targeting, and funnels, to provide insights for organic strategy, focusing on LTV and CPA as key metrics
+Sr. Growth & SEO Manager
+Adobe
+B2C & B2B SaaS, FT Remote, May 2019 to May 2022
+Strategy & Planning Leadership - managed the data and analytics strategy, tools & data requirements, data models, and performance metrics, which influenced the company's shift towards a more data-driven organic growth & SEO culture
+Objective: proposed and justified increased investment into frictionless web-based product solutions for the Creative and Business Cloud of products to increase the SEO market share
+Result: our market share for web-based keywords increased from ~12% to ~52% YoY
+SEO & Organic Growth - managed multiple experiments (split tests) weekly to improve acquisition through technical optimizations, design and conversions, content strategy & distribution, and product-related improvements - including international SEO
+Result: ~9.5% organic growth YoY, primarily through SEO, and 4.8% above targets
+Product & Content Marketing - supported and collaborated with cross-functional teams to create and optimize core value propositions, positioning, customer segmentation, and GTM, aligning and educating on competitive strategies, backlink acquisition, and other factors
+Result: improved conversion rates for key product lines by an avg. of ~14% over baseline
+Team Management - collaborated with data science, product managers, and design teams to align KPIs with objectives, grew and managed a team of 5 SEO managers and 3 data engineers
+Data & Analytics Engineering - built a robust growth & SEO analytics environment using data pipelines fed from GSC, Ahrefs, and other tools, for reporting dashboards, with data models to support decision-making, forecasting, trends, cost analysis, competitive analysis, attribution models and other various statistical & machine learning-based insights automation (TechStack: AWS S3, Glue, Athena, Airflow, MongoDB, QuickSight)
+
+Growth & SEO Director
+Credit Sesame
+B2C FinTech SaaS, FT - Remote, Jan 2014 to May 2018
+Strategy & Planning - responsible for managing the growth & SEO (organic acquisition) budgets, aligning with the finance team, forecasting expected growth above baseline
+Results: increased organic share of total acquisition from ~8.5% to ~20% within 16 months (normalized), achieved position 1 main keyword “free credit score" (325K monthly searches, $12 CPC), increasing our total revenue contribution by ~14% over baseline
+Collaboration & Team Management - built and managed a marketing team of 10 inhouse, 3 contractors, and 2 agencies to drive integrated SEO efforts and organic growth, streamlining strategic planning, executing initiatives and optimizations
+Objective: utilize product development & marketing as a strategic channel for growth & SEO acquisition by developing a free student scholarship & career tool
+Result: 
+SEO & Growth Performance - owned core organic acquisition channels; the goal to increase total share of new registered users, contributed and delegated strategies and actionable insights for organic channels such as content strategy & management, branding & PR, content distribution & referrals, domain architecture (internal links) & taxonomy, keyword research & optimization, UI/UX and conversion optimization with split testing, affiliates & partnership marketing, and technical SEO
+Objective: increase total backlinks acquired to content and landing pages by utilizing a data-driven approach to content development & using financial data sets as tradable assets with journalists (reporters), influencers, and others
+Result: with a strategic alignment on content strategy, media & PR, and analytics support, the team created a data-driven content development flow (agile), alongside prebuilt data assets for utilization in creating stories (tables, graphs, etc.) and as exchange leveraged; the outcome was a distribution channel of 85 various publishers picking up select new content, increasing average backlinks per page by 185% above baseline
+Marketing Analytics & Engineering: developed a new analytics system to track SEO performance, automate data mining, competitive analysis tracking, brand and media coverage insights, keyword performance & correlations, and other vital components that connect to the business KPIs such as user acquisition & revenue
+Key Results: justified launching two split tests per week for conversion optimization through machine learning models (unsupervised learning) to automate the discovery of patterns, increased total media coverage and backlinks acquired to landing pages by 125% YoY through data exploration on historical competitive performances
+Growth Analytics Consultant
+Independent Consultant, Remote ‒ Jan 2009 - May 2014
+
+
+Qualifications
+Conceptual thinker with proven analytics and problem-solving skills, ability to concisely distill, communicate, and present complex information in an easy-to-understand manner
+Providing extensive cross-functional knowledge of growth and marketing, managing, developing, and implementing strategies for end-to-end customer journeys; acquisition, activation (onboarding), retention, revenue, and referral touch points
+Experienced in leading marketing analytics (and mentoring) to drive growth & SEO impact, using advanced analytical techniques, such as A/B testing, attribution modeling, ROI analysis, and other forecasting, bringing process and structure to support a data-driven environment and decisions
+Education
+Master’s of Science in Business Analytics
+Arizona State University, Tempe, AZ
+Data Mining - applied data mining techniques, & big data storage solutions with Hadoop + AWS
+Statistics & Insights - utilized regression analysis and machine learning techniques to understand patterns, trends, and relationships between data for supporting business cases
+Data Modeling - developed a forecasting model for a bank in Alaska to help them target prospective clients more effectively by utilizing historical trends and performance data
+
+Bachelor’s of Science in Information Technology
+York University, Toronto, Canada
+
+Skills & Utilities
+Organic Marketing & Acquisition
+Search Engine Optimization (SEO)
+Google (& International SEO), Bing, Baidu, Yandex, Naver
+& Google Analytics, Google Search Console, Ahrefs, Semrush,
+BrightEdge, Screaming Frog, Botify
+Social Media Optimization (SMO)
+Facebook, Instagram, TikTok, Snapchat, LinkedIn, Twitter, YouTube, Reddit, Medium
+& Hootsuite, Buffer, Mention, Upfluence
+Brand & PR (Media) Management - Meltwater, Prowly, Haro
+Affiliate & Referral Marketing- CJ Affiliate, ShareASale, FlexOffers, & Tune
+Email & Lifecycle Marketing - SendGrid, Brevo, Hootsuite
+Paid Marketing & Acquisition
+Search Engine Marketing (SEM)
+Social Media Marketing (SMM) w/ Display & Video Ads - Facebook Ads, Instagram Ads. TikTok Ads, LinkedIn Ads, Reddit Ads, YouTube Ads
+Mobile and App Install Marketing Campaigns
+Data Analytics & Engineering
+Marketing Analytics - Metrics Strategy, Dashboards, Reporting, Attribution
+Business Intelligence & Dashboards - Looker, Amplitude, Tableau, Excel (& Google Sheets)
+Programming & Scripting - Python, SQL & Shell Scripting
+Cloud Management - AWS, Google Cloud
+Data Warehousing & Databases - MongoDB, BigQuery, Redshift, S3
+Data Engineering - Spark, Hadoop, ETL (Data Pipelines) w/ Airflow
+SEO Tools & Utilities - Ahrefs, Semrush, Screaming Frog, DataForSEO (API), BrightEdge
