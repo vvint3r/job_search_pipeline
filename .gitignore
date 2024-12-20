@@ -30,4 +30,4 @@ cookies.txt
 job_search_results/
 *.csv
 *.html
-chromedriver
+google-chrome-stable_current_amd64.deb
