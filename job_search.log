@@ -1,0 +1,585 @@
+2024-12-20 05:24:39 - INFO - Starting job search for: SEO Manager
+2024-12-20 05:24:52 - INFO - Search parameters: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 05:24:52 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 05:24:52 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 05:24:52 - INFO - Setting up Chrome options...
+2024-12-20 05:24:52 - INFO - Initializing Chrome driver...
+2024-12-20 05:24:53 - INFO - Chrome driver initialized successfully
+2024-12-20 05:24:53 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:24:53 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:24:53 - INFO - Loading cookies...
+2024-12-20 05:24:53 - INFO - Cookie file read successfully
+2024-12-20 05:24:53 - INFO - Successfully parsed 25 cookies
+2024-12-20 05:24:53 - INFO - Loading cookies...
+2024-12-20 05:24:53 - WARNING - Error adding cookie li_sugr
+2024-12-20 05:24:53 - WARNING - Error adding cookie bcookie
+2024-12-20 05:24:53 - WARNING - Error adding cookie bscookie
+2024-12-20 05:24:53 - WARNING - Error adding cookie lang
+2024-12-20 05:24:53 - WARNING - Error adding cookie AMCVS_14215E3D5995C57C0A495C55%40AdobeOrg
+2024-12-20 05:24:53 - WARNING - Error adding cookie aam_uuid
+2024-12-20 05:24:53 - WARNING - Error adding cookie g_state
+2024-12-20 05:24:53 - WARNING - Error adding cookie g_state
+2024-12-20 05:24:53 - WARNING - Error adding cookie liap
+2024-12-20 05:24:53 - WARNING - Error adding cookie li_at
+2024-12-20 05:24:53 - WARNING - Error adding cookie JSESSIONID
+2024-12-20 05:24:53 - WARNING - Error adding cookie timezone
+2024-12-20 05:24:53 - WARNING - Error adding cookie li_theme
+2024-12-20 05:24:53 - WARNING - Error adding cookie li_theme_set
+2024-12-20 05:24:53 - WARNING - Error adding cookie AnalyticsSyncHistory
+2024-12-20 05:24:53 - WARNING - Error adding cookie _guid
+2024-12-20 05:24:53 - WARNING - Error adding cookie lms_ads
+2024-12-20 05:24:53 - WARNING - Error adding cookie unknown
+2024-12-20 05:24:53 - WARNING - Error adding cookie lms_analytics
+2024-12-20 05:24:53 - WARNING - Error adding cookie dfpfpt
+2024-12-20 05:24:53 - WARNING - Error adding cookie AMCV_14215E3D5995C57C0A495C55%40AdobeOrg
+2024-12-20 05:24:53 - WARNING - Error adding cookie _gcl_au
+2024-12-20 05:24:53 - WARNING - Error adding cookie fptctx2
+2024-12-20 05:24:53 - WARNING - Error adding cookie UserMatchHistory
+2024-12-20 05:24:53 - WARNING - Error adding cookie lidc
+2024-12-20 05:24:53 - INFO - Successfully loaded 0 cookies
+2024-12-20 05:24:58 - INFO - Verifying LinkedIn login...
+2024-12-20 05:25:00 - INFO - Navigating to search URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:25:09 - INFO - Processing page 1
+2024-12-20 05:25:19 - ERROR - Error locating job container: Message: 
+Stacktrace:
+#0 0x559f2880031a <unknown>
+#1 0x559f283166e0 <unknown>
+#2 0x559f283653e6 <unknown>
+#3 0x559f28365681 <unknown>
+#4 0x559f283aab04 <unknown>
+#5 0x559f2838948d <unknown>
+#6 0x559f283a7ed7 <unknown>
+#7 0x559f28389203 <unknown>
+#8 0x559f28357cc0 <unknown>
+#9 0x559f28358c9e <unknown>
+#10 0x559f287cdd0b <unknown>
+#11 0x559f287d1c92 <unknown>
+#12 0x559f287bab3c <unknown>
+#13 0x559f287d2807 <unknown>
+#14 0x559f287a00df <unknown>
+#15 0x559f287ef578 <unknown>
+#16 0x559f287ef740 <unknown>
+#17 0x559f287ff196 <unknown>
+#18 0x7fc8801acac3 <unknown>
+
+2024-12-20 05:25:19 - INFO - Scraped 0 jobs
+2024-12-20 05:25:19 - WARNING - No jobs found
+2024-12-20 05:25:19 - INFO - Pausing to inspect the browser...
+2024-12-20 05:25:49 - INFO - Closing driver...
+2024-12-20 05:25:49 - WARNING - No results to save
+2024-12-20 05:25:49 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f6dc966f9a0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f86a1d32e963b0731b6b478ac8473559
+2024-12-20 05:25:49 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f6dc966f250>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f86a1d32e963b0731b6b478ac8473559
+2024-12-20 05:25:49 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f6dc966e2c0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f86a1d32e963b0731b6b478ac8473559
+2024-12-20 05:30:53 - INFO - Starting job search for: SEO Manager
+2024-12-20 05:31:03 - INFO - Search parameters: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 05:31:03 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 05:31:03 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 05:31:03 - INFO - Setting up Chrome options...
+2024-12-20 05:31:03 - INFO - Initializing Chrome driver...
+2024-12-20 05:31:04 - INFO - Chrome driver initialized successfully
+2024-12-20 05:31:04 - INFO - Driver setup complete
+2024-12-20 05:31:04 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:31:04 - INFO - Attempting to navigate to URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:31:04 - INFO - Navigating to LinkedIn main page...
+2024-12-20 05:31:10 - INFO - Loading cookies...
+2024-12-20 05:31:10 - INFO - Cookie file read successfully
+2024-12-20 05:31:10 - INFO - Successfully parsed 25 cookies
+2024-12-20 05:31:10 - INFO - Loading cookies...
+2024-12-20 05:31:10 - WARNING - Error adding cookie lms_ads
+2024-12-20 05:31:10 - WARNING - Error adding cookie unknown
+2024-12-20 05:31:10 - INFO - Successfully loaded 23 cookies
+2024-12-20 05:31:18 - INFO - Cookies loaded, waiting for page load...
+2024-12-20 05:31:22 - INFO - Navigating to search URL...
+2024-12-20 05:31:30 - INFO - Current URL: https://www.linkedin.com/jobs/search/?currentJobId=4078685083&f_SB2=6&f_WT=2&keywords=%22seo%20manager%22&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:31:30 - INFO - Starting job scraping...
+2024-12-20 05:31:30 - INFO - Starting job scraping process...
+2024-12-20 05:31:30 - INFO - Processing page 1
+2024-12-20 05:31:30 - INFO - Waiting for job container...
+2024-12-20 05:31:40 - ERROR - Error finding job container: Message: 
+Stacktrace:
+#0 0x55fbb311b31a <unknown>
+#1 0x55fbb2c316e0 <unknown>
+#2 0x55fbb2c803e6 <unknown>
+#3 0x55fbb2c80681 <unknown>
+#4 0x55fbb2cc5b04 <unknown>
+#5 0x55fbb2ca448d <unknown>
+#6 0x55fbb2cc2ed7 <unknown>
+#7 0x55fbb2ca4203 <unknown>
+#8 0x55fbb2c72cc0 <unknown>
+#9 0x55fbb2c73c9e <unknown>
+#10 0x55fbb30e8d0b <unknown>
+#11 0x55fbb30ecc92 <unknown>
+#12 0x55fbb30d5b3c <unknown>
+#13 0x55fbb30ed807 <unknown>
+#14 0x55fbb30bb0df <unknown>
+#15 0x55fbb310a578 <unknown>
+#16 0x55fbb310a740 <unknown>
+#17 0x55fbb311a196 <unknown>
+#18 0x7f7589cb3ac3 <unknown>
+
+2024-12-20 05:31:40 - INFO - Completed scraping. Total jobs found: 0
+2024-12-20 05:31:40 - INFO - Scraped 0 jobs
+2024-12-20 05:31:40 - WARNING - No jobs found
+2024-12-20 05:31:40 - INFO - Pausing to inspect the browser...
+2024-12-20 05:32:10 - INFO - Closing driver...
+2024-12-20 05:32:10 - WARNING - No results to save
+2024-12-20 05:32:10 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fcab19d39d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f50f5c1d89e6151a697803c2961120e4
+2024-12-20 05:32:10 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fcab19d3220>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f50f5c1d89e6151a697803c2961120e4
+2024-12-20 05:32:10 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fcab19d2350>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/f50f5c1d89e6151a697803c2961120e4
+2024-12-20 05:39:15 - INFO - Starting job search for: SEO Manager
+2024-12-20 05:39:29 - INFO - Search parameters: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 05:39:29 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 05:39:29 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 05:39:29 - INFO - Setting up Chrome options...
+2024-12-20 05:39:29 - INFO - Initializing Chrome driver...
+2024-12-20 05:39:30 - INFO - Chrome driver initialized successfully
+2024-12-20 05:39:30 - INFO - Driver setup complete
+2024-12-20 05:39:30 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:39:30 - INFO - Attempting to navigate to URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:39:30 - INFO - Navigating to LinkedIn main page...
+2024-12-20 05:39:36 - INFO - Loading cookies...
+2024-12-20 05:39:36 - INFO - Cookie file read successfully
+2024-12-20 05:39:36 - INFO - Successfully parsed 25 cookies
+2024-12-20 05:39:36 - INFO - Loading cookies...
+2024-12-20 05:39:36 - WARNING - Error adding cookie lms_ads
+2024-12-20 05:39:36 - WARNING - Error adding cookie unknown
+2024-12-20 05:39:36 - INFO - Successfully loaded 23 cookies
+2024-12-20 05:39:43 - INFO - Cookies loaded, waiting for page load...
+2024-12-20 05:39:48 - INFO - Navigating to search URL...
+2024-12-20 05:39:57 - INFO - Current URL: https://www.linkedin.com/jobs/search/?currentJobId=4078685083&f_SB2=6&f_WT=2&keywords=%22seo%20manager%22&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 05:39:57 - INFO - Starting job scraping...
+2024-12-20 05:39:57 - INFO - Starting job scraping process...
+2024-12-20 05:39:57 - INFO - Processing page 1
+2024-12-20 05:39:57 - INFO - Waiting for job container...
+2024-12-20 05:40:07 - ERROR - Error finding job container: Message: 
+Stacktrace:
+#0 0x55f77e00531a <unknown>
+#1 0x55f77db1b6e0 <unknown>
+#2 0x55f77db6a3e6 <unknown>
+#3 0x55f77db6a681 <unknown>
+#4 0x55f77dbafb04 <unknown>
+#5 0x55f77db8e48d <unknown>
+#6 0x55f77dbaced7 <unknown>
+#7 0x55f77db8e203 <unknown>
+#8 0x55f77db5ccc0 <unknown>
+#9 0x55f77db5dc9e <unknown>
+#10 0x55f77dfd2d0b <unknown>
+#11 0x55f77dfd6c92 <unknown>
+#12 0x55f77dfbfb3c <unknown>
+#13 0x55f77dfd7807 <unknown>
+#14 0x55f77dfa50df <unknown>
+#15 0x55f77dff4578 <unknown>
+#16 0x55f77dff4740 <unknown>
+#17 0x55f77e004196 <unknown>
+#18 0x7ff6543b5ac3 <unknown>
+
+2024-12-20 05:40:07 - INFO - Completed scraping. Total jobs found: 0
+2024-12-20 05:40:07 - INFO - Scraped 0 jobs
+2024-12-20 05:40:07 - WARNING - No jobs found
+2024-12-20 05:40:07 - INFO - Pausing to inspect the browser...
+2024-12-20 05:40:37 - INFO - Closing driver...
+2024-12-20 05:40:37 - WARNING - No results to save
+2024-12-20 05:40:37 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7feead0ff9d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/17f708df66b9c24168910a6bd08a6968
+2024-12-20 05:40:37 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7feead0ff220>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/17f708df66b9c24168910a6bd08a6968
+2024-12-20 05:40:37 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7feead0fe350>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/17f708df66b9c24168910a6bd08a6968
+2024-12-20 06:42:05 - INFO - Script starting...
+2024-12-20 06:42:05 - INFO - Starting job search for: SEO Manager
+2024-12-20 06:42:05 - INFO - Getting search parameters...
+2024-12-20 06:42:05 - INFO - Starting parameter selection...
+2024-12-20 06:42:06 - INFO - Selected salary range: $140,000
+2024-12-20 06:42:07 - INFO - Selected job type: contract
+2024-12-20 06:42:08 - INFO - Selected search type: exact
+2024-12-20 06:42:09 - INFO - Selected remote status: true
+2024-12-20 06:42:09 - INFO - Final parameters: {'salary_range': 140000, 'job_type': 'contract', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 06:42:09 - INFO - Search parameters received: {'salary_range': 140000, 'job_type': 'contract', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 06:42:09 - INFO - Creating search directory...
+2024-12-20 06:42:09 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 06:42:09 - INFO - Search folder created: job_search_results/seo_manager
+2024-12-20 06:42:09 - INFO - Starting LinkedIn search...
+2024-12-20 06:42:09 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 06:42:09 - INFO - Setting up Chrome options...
+2024-12-20 06:42:09 - INFO - Initializing Chrome driver...
+2024-12-20 06:42:10 - INFO - Chrome driver initialized successfully
+2024-12-20 06:42:10 - INFO - Driver setup complete
+2024-12-20 06:42:10 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 06:42:10 - INFO - Attempting to navigate to URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 06:42:10 - INFO - Navigating to LinkedIn main page...
+2024-12-20 06:42:16 - INFO - Loading cookies...
+2024-12-20 06:42:16 - INFO - Cookie file read successfully
+2024-12-20 06:42:16 - INFO - Successfully parsed 25 cookies
+2024-12-20 06:42:16 - INFO - Loading cookies...
+2024-12-20 06:42:16 - WARNING - Error adding cookie lms_ads
+2024-12-20 06:42:16 - WARNING - Error adding cookie unknown
+2024-12-20 06:42:16 - INFO - Successfully loaded 23 cookies
+2024-12-20 06:42:23 - INFO - Cookies loaded, waiting for page load...
+2024-12-20 06:42:28 - INFO - Navigating to search URL...
+2024-12-20 06:42:36 - INFO - Current URL: https://www.linkedin.com/jobs/search/?currentJobId=4078685083&f_SB2=6&f_WT=2&keywords=%22seo%20manager%22&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 06:42:36 - INFO - Starting job scraping...
+2024-12-20 06:42:36 - INFO - Starting job scraping process...
+2024-12-20 06:42:36 - INFO - Processing page 1
+2024-12-20 06:42:36 - INFO - Waiting for job container...
+2024-12-20 06:42:47 - ERROR - Error finding job container: Message: 
+Stacktrace:
+#0 0x55d9e231331a <unknown>
+#1 0x55d9e1e296e0 <unknown>
+#2 0x55d9e1e783e6 <unknown>
+#3 0x55d9e1e78681 <unknown>
+#4 0x55d9e1ebdb04 <unknown>
+#5 0x55d9e1e9c48d <unknown>
+#6 0x55d9e1ebaed7 <unknown>
+#7 0x55d9e1e9c203 <unknown>
+#8 0x55d9e1e6acc0 <unknown>
+#9 0x55d9e1e6bc9e <unknown>
+#10 0x55d9e22e0d0b <unknown>
+#11 0x55d9e22e4c92 <unknown>
+#12 0x55d9e22cdb3c <unknown>
+#13 0x55d9e22e5807 <unknown>
+#14 0x55d9e22b30df <unknown>
+#15 0x55d9e2302578 <unknown>
+#16 0x55d9e2302740 <unknown>
+#17 0x55d9e2312196 <unknown>
+#18 0x7fbfa59d0ac3 <unknown>
+
+2024-12-20 06:42:47 - INFO - Completed scraping. Total jobs found: 0
+2024-12-20 06:42:47 - INFO - Scraped 0 jobs
+2024-12-20 06:42:47 - WARNING - No jobs found
+2024-12-20 06:42:47 - INFO - Pausing to inspect the browser...
+2024-12-20 06:43:17 - INFO - Closing driver...
+2024-12-20 06:43:17 - INFO - LinkedIn search completed
+2024-12-20 06:43:17 - WARNING - No results found or DataFrame is empty
+2024-12-20 06:43:17 - INFO - Script completed successfully
+2024-12-20 06:43:17 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f2b51d7f9d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/3d8ab64af5648f7923507cd180f15344
+2024-12-20 06:43:17 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f2b51d7f220>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/3d8ab64af5648f7923507cd180f15344
+2024-12-20 06:43:17 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f2b51d7e350>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/3d8ab64af5648f7923507cd180f15344
+2024-12-20 06:59:12 - INFO - Starting job search for: SEO Manager
+2024-12-20 06:59:12 - INFO - Getting search parameters...
+2024-12-20 06:59:12 - INFO - Starting parameter selection...
+2024-12-20 07:05:12 - INFO - Starting job search for: SEO Manager
+2024-12-20 07:05:13 - INFO - Getting search parameters...
+2024-12-20 07:05:13 - ERROR - Error getting search parameters: EOF when reading a line
+2024-12-20 07:05:13 - ERROR - Error in main: EOF when reading a line
+2024-12-20 07:05:13 - ERROR - Stack trace:
+Traceback (most recent call last):
+  File "/home/wynt3r/JobSearch/./job_search.py", line 444, in main
+    search_params = get_search_parameters()
+  File "/home/wynt3r/JobSearch/./job_search.py", line 190, in get_search_parameters
+    salary_choice = int(input("Select salary range (number): ").strip())
+EOFError: EOF when reading a line
+2024-12-20 07:05:13 - ERROR - Script failed: EOF when reading a line
+2024-12-20 07:05:13 - ERROR - Stack trace:
+Traceback (most recent call last):
+  File "/home/wynt3r/JobSearch/./job_search.py", line 489, in <module>
+    main()
+  File "/home/wynt3r/JobSearch/./job_search.py", line 444, in main
+    search_params = get_search_parameters()
+  File "/home/wynt3r/JobSearch/./job_search.py", line 190, in get_search_parameters
+    salary_choice = int(input("Select salary range (number): ").strip())
+EOFError: EOF when reading a line
+2024-12-20 07:05:34 - INFO - Starting job search for: SEO Manager
+2024-12-20 07:05:34 - INFO - Getting search parameters...
+2024-12-20 07:05:34 - ERROR - Error getting search parameters: EOF when reading a line
+2024-12-20 07:05:34 - ERROR - Error in main: EOF when reading a line
+2024-12-20 07:05:34 - ERROR - Stack trace:
+Traceback (most recent call last):
+  File "/home/wynt3r/JobSearch/./job_search.py", line 444, in main
+    search_params = get_search_parameters()
+  File "/home/wynt3r/JobSearch/./job_search.py", line 190, in get_search_parameters
+    salary_choice = int(input("Select salary range (number): ").strip())
+EOFError: EOF when reading a line
+2024-12-20 07:05:34 - ERROR - Script failed: EOF when reading a line
+2024-12-20 07:05:34 - ERROR - Stack trace:
+Traceback (most recent call last):
+  File "/home/wynt3r/JobSearch/./job_search.py", line 489, in <module>
+    main()
+  File "/home/wynt3r/JobSearch/./job_search.py", line 444, in main
+    search_params = get_search_parameters()
+  File "/home/wynt3r/JobSearch/./job_search.py", line 190, in get_search_parameters
+    salary_choice = int(input("Select salary range (number): ").strip())
+EOFError: EOF when reading a line
+2024-12-20 07:06:21 - INFO - Starting job search for: SEO Manager
+2024-12-20 07:06:21 - INFO - Getting search parameters...
+2024-12-20 07:06:25 - INFO - Selected parameters: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:06:25 - INFO - Search parameters received: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:06:25 - INFO - Creating search directory...
+2024-12-20 07:06:25 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 07:06:25 - INFO - Search folder created: job_search_results/seo_manager
+2024-12-20 07:06:25 - INFO - Starting LinkedIn search...
+2024-12-20 07:06:25 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 07:06:25 - INFO - Setting up Chrome options...
+2024-12-20 07:06:25 - INFO - Initializing Chrome driver...
+2024-12-20 07:06:26 - INFO - Chrome driver initialized successfully
+2024-12-20 07:06:26 - INFO - Driver setup complete
+2024-12-20 07:06:26 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:06:26 - INFO - Attempting to navigate to URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:06:26 - INFO - Navigating to LinkedIn main page...
+2024-12-20 07:06:32 - INFO - Loading cookies...
+2024-12-20 07:06:32 - INFO - Cookie file read successfully
+2024-12-20 07:06:32 - INFO - Successfully parsed 25 cookies
+2024-12-20 07:06:32 - INFO - Loading cookies...
+2024-12-20 07:06:32 - WARNING - Error adding cookie lms_ads
+2024-12-20 07:06:32 - WARNING - Error adding cookie unknown
+2024-12-20 07:06:32 - INFO - Successfully loaded 23 cookies
+2024-12-20 07:06:40 - INFO - Cookies loaded, waiting for page load...
+2024-12-20 07:06:45 - INFO - Navigating to search URL...
+2024-12-20 07:06:53 - INFO - Starting job scraping...
+2024-12-20 07:06:53 - INFO - Starting job scraping process...
+2024-12-20 07:06:53 - INFO - Processing page 1
+2024-12-20 07:06:53 - INFO - Waiting for job container...
+2024-12-20 07:07:03 - ERROR - Error finding job container: Message: 
+Stacktrace:
+#0 0x5572fd96831a <unknown>
+#1 0x5572fd47e6e0 <unknown>
+#2 0x5572fd4cd3e6 <unknown>
+#3 0x5572fd4cd681 <unknown>
+#4 0x5572fd512b04 <unknown>
+#5 0x5572fd4f148d <unknown>
+#6 0x5572fd50fed7 <unknown>
+#7 0x5572fd4f1203 <unknown>
+#8 0x5572fd4bfcc0 <unknown>
+#9 0x5572fd4c0c9e <unknown>
+#10 0x5572fd935d0b <unknown>
+#11 0x5572fd939c92 <unknown>
+#12 0x5572fd922b3c <unknown>
+#13 0x5572fd93a807 <unknown>
+#14 0x5572fd9080df <unknown>
+#15 0x5572fd957578 <unknown>
+#16 0x5572fd957740 <unknown>
+#17 0x5572fd967196 <unknown>
+#18 0x7fa06427aac3 <unknown>
+
+2024-12-20 07:07:03 - INFO - Completed scraping. Total jobs found: 0
+2024-12-20 07:07:03 - INFO - Scraped 0 jobs
+2024-12-20 07:07:03 - WARNING - No jobs found
+2024-12-20 07:07:03 - INFO - LinkedIn search completed
+2024-12-20 07:07:03 - WARNING - No results found or DataFrame is empty
+2024-12-20 07:07:03 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f4e567739d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/9525feec997993cba37f331b25d2f8e6
+2024-12-20 07:07:03 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f4e56773220>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/9525feec997993cba37f331b25d2f8e6
+2024-12-20 07:07:03 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f4e56772350>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/9525feec997993cba37f331b25d2f8e6
+2024-12-20 07:09:32 - INFO - Starting job search for: SEO Manager
+2024-12-20 07:09:32 - INFO - Getting search parameters...
+2024-12-20 07:09:37 - INFO - Selected parameters: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:09:37 - INFO - Search parameters received: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:09:37 - INFO - Creating search directory...
+2024-12-20 07:09:37 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 07:09:37 - INFO - Search folder created: job_search_results/seo_manager
+2024-12-20 07:09:37 - INFO - Starting LinkedIn search...
+2024-12-20 07:09:37 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 07:09:37 - INFO - Setting up Chrome options...
+2024-12-20 07:09:37 - INFO - Initializing Chrome driver...
+2024-12-20 07:09:38 - INFO - Chrome driver initialized successfully
+2024-12-20 07:09:38 - INFO - Driver setup complete
+2024-12-20 07:09:38 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:09:38 - INFO - Attempting to navigate to URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:09:38 - INFO - Navigating to LinkedIn main page...
+2024-12-20 07:09:44 - INFO - Loading cookies...
+2024-12-20 07:09:44 - INFO - Cookie file read successfully
+2024-12-20 07:09:44 - INFO - Successfully parsed 25 cookies
+2024-12-20 07:09:44 - INFO - Loading cookies...
+2024-12-20 07:09:44 - WARNING - Error adding cookie lms_ads
+2024-12-20 07:09:44 - WARNING - Error adding cookie unknown
+2024-12-20 07:09:44 - INFO - Successfully loaded 23 cookies
+2024-12-20 07:09:51 - INFO - Cookies loaded, waiting for page load...
+2024-12-20 07:09:56 - INFO - Navigating to search URL...
+2024-12-20 07:10:05 - INFO - Starting job scraping...
+2024-12-20 07:10:05 - INFO - Starting job scraping process...
+2024-12-20 07:10:05 - INFO - Processing page 1
+2024-12-20 07:10:05 - INFO - Waiting for job container...
+2024-12-20 07:10:15 - ERROR - Error finding job container: Message: 
+Stacktrace:
+#0 0x55db98a0731a <unknown>
+#1 0x55db9851d6e0 <unknown>
+#2 0x55db9856c3e6 <unknown>
+#3 0x55db9856c681 <unknown>
+#4 0x55db985b1b04 <unknown>
+#5 0x55db9859048d <unknown>
+#6 0x55db985aeed7 <unknown>
+#7 0x55db98590203 <unknown>
+#8 0x55db9855ecc0 <unknown>
+#9 0x55db9855fc9e <unknown>
+#10 0x55db989d4d0b <unknown>
+#11 0x55db989d8c92 <unknown>
+#12 0x55db989c1b3c <unknown>
+#13 0x55db989d9807 <unknown>
+#14 0x55db989a70df <unknown>
+#15 0x55db989f6578 <unknown>
+#16 0x55db989f6740 <unknown>
+#17 0x55db98a06196 <unknown>
+#18 0x7f83fb456ac3 <unknown>
+
+2024-12-20 07:10:15 - INFO - Completed scraping. Total jobs found: 0
+2024-12-20 07:10:15 - INFO - Scraped 0 jobs
+2024-12-20 07:10:15 - WARNING - No jobs found
+2024-12-20 07:10:15 - INFO - LinkedIn search completed
+2024-12-20 07:10:15 - WARNING - No results found or DataFrame is empty
+2024-12-20 07:10:15 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f9433edb9d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/5a8457e76aa2d0b5766e49ddeb03a695
+2024-12-20 07:10:15 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f9433edb220>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/5a8457e76aa2d0b5766e49ddeb03a695
+2024-12-20 07:10:15 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f9433eda350>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/5a8457e76aa2d0b5766e49ddeb03a695
+2024-12-20 07:21:56 - INFO - Starting job search for: SEO Manager
+2024-12-20 07:21:56 - INFO - Getting search parameters...
+2024-12-20 07:21:59 - INFO - Selected parameters: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:21:59 - INFO - Search parameters received: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:21:59 - INFO - Creating search directory...
+2024-12-20 07:21:59 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 07:21:59 - INFO - Search folder created: job_search_results/seo_manager
+2024-12-20 07:21:59 - INFO - Starting LinkedIn search...
+2024-12-20 07:21:59 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 07:21:59 - INFO - Setting up Chrome options...
+2024-12-20 07:21:59 - INFO - Initializing Chrome driver...
+2024-12-20 07:22:00 - INFO - Chrome driver initialized successfully
+2024-12-20 07:22:00 - INFO - Driver setup complete
+2024-12-20 07:22:00 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:22:00 - INFO - Attempting to navigate to URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:22:00 - INFO - Navigating to LinkedIn main page...
+2024-12-20 07:22:06 - INFO - Loading cookies...
+2024-12-20 07:22:06 - INFO - Cookie file read successfully
+2024-12-20 07:22:06 - INFO - Successfully parsed 25 cookies
+2024-12-20 07:22:06 - INFO - Loading cookies...
+2024-12-20 07:22:07 - WARNING - Error adding cookie lms_ads
+2024-12-20 07:22:07 - WARNING - Error adding cookie unknown
+2024-12-20 07:22:07 - INFO - Successfully loaded 23 cookies
+2024-12-20 07:22:14 - INFO - Cookies loaded, waiting for page load...
+2024-12-20 07:22:19 - INFO - Navigating to search URL...
+2024-12-20 07:22:26 - INFO - Starting job scraping...
+2024-12-20 07:22:26 - INFO - Starting job scraping...
+2024-12-20 07:22:34 - INFO - Scraping page 1
+2024-12-20 07:22:39 - INFO - Found 0 job cards on page 1
+2024-12-20 07:22:39 - INFO - No more pages available: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[aria-label='Next']"}
+  (Session info: chrome=131.0.6778.139); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+#0 0x5645358d731a <unknown>
+#1 0x5645353ed6e0 <unknown>
+#2 0x56453543c3e6 <unknown>
+#3 0x56453543c681 <unknown>
+#4 0x564535481b04 <unknown>
+#5 0x56453546048d <unknown>
+#6 0x56453547eed7 <unknown>
+#7 0x564535460203 <unknown>
+#8 0x56453542ecc0 <unknown>
+#9 0x56453542fc9e <unknown>
+#10 0x5645358a4d0b <unknown>
+#11 0x5645358a8c92 <unknown>
+#12 0x564535891b3c <unknown>
+#13 0x5645358a9807 <unknown>
+#14 0x5645358770df <unknown>
+#15 0x5645358c6578 <unknown>
+#16 0x5645358c6740 <unknown>
+#17 0x5645358d6196 <unknown>
+#18 0x7f8e25969ac3 <unknown>
+
+2024-12-20 07:22:39 - INFO - Completed scraping. Total jobs found: 0
+2024-12-20 07:22:39 - INFO - Scraped 0 jobs
+2024-12-20 07:22:39 - WARNING - No jobs found
+2024-12-20 07:22:39 - INFO - LinkedIn search completed
+2024-12-20 07:22:39 - WARNING - No results found or DataFrame is empty
+2024-12-20 07:22:39 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f053a0739d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/af02b0362d70f5f5d25a38a962b53096
+2024-12-20 07:22:39 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f053a073220>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/af02b0362d70f5f5d25a38a962b53096
+2024-12-20 07:22:39 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f053a072350>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/af02b0362d70f5f5d25a38a962b53096
+2024-12-20 07:33:43 - INFO - Starting job search for: SEO Manager
+2024-12-20 07:33:43 - INFO - Getting search parameters...
+2024-12-20 07:33:50 - INFO - Selected parameters: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:33:50 - INFO - Search parameters received: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:33:50 - INFO - Creating search directory...
+2024-12-20 07:33:50 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 07:33:50 - INFO - Search folder created: job_search_results/seo_manager
+2024-12-20 07:33:50 - INFO - Starting LinkedIn search...
+2024-12-20 07:33:50 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 07:33:50 - INFO - Setting up Chrome options...
+2024-12-20 07:33:50 - INFO - Initializing Chrome driver...
+2024-12-20 07:33:51 - INFO - Chrome driver initialized successfully
+2024-12-20 07:33:51 - INFO - Driver setup complete
+2024-12-20 07:33:51 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:33:51 - INFO - Attempting to navigate to URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:33:51 - INFO - Navigating to LinkedIn main page...
+2024-12-20 07:33:57 - INFO - Loading cookies...
+2024-12-20 07:33:57 - INFO - Cookie file read successfully
+2024-12-20 07:33:57 - INFO - Successfully parsed 25 cookies
+2024-12-20 07:33:57 - INFO - Loading cookies...
+2024-12-20 07:33:57 - WARNING - Error adding cookie lms_ads
+2024-12-20 07:33:57 - WARNING - Error adding cookie unknown
+2024-12-20 07:33:57 - INFO - Successfully loaded 23 cookies
+2024-12-20 07:34:05 - INFO - Cookies loaded, waiting for page load...
+2024-12-20 07:34:10 - INFO - Navigating to search URL...
+2024-12-20 07:34:19 - INFO - Starting job scraping...
+2024-12-20 07:34:19 - INFO - Starting job scraping...
+2024-12-20 07:34:27 - INFO - Scraping page 1
+2024-12-20 07:34:32 - INFO - Found 3 job cards on page 1
+2024-12-20 07:34:32 - INFO - Processed job: Technical SEO Manager
+2024-12-20 07:34:32 - INFO - Processed job: SEO Manager
+2024-12-20 07:34:32 - INFO - Processed job: SEO Manager
+2024-12-20 07:34:32 - INFO - No more pages available: Message: no such element: Unable to locate element: {"method":"css selector","selector":"[aria-label='View next page']"}
+  (Session info: chrome=131.0.6778.139); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+#0 0x560c5ddb431a <unknown>
+#1 0x560c5d8ca6e0 <unknown>
+#2 0x560c5d9193e6 <unknown>
+#3 0x560c5d919681 <unknown>
+#4 0x560c5d95eb04 <unknown>
+#5 0x560c5d93d48d <unknown>
+#6 0x560c5d95bed7 <unknown>
+#7 0x560c5d93d203 <unknown>
+#8 0x560c5d90bcc0 <unknown>
+#9 0x560c5d90cc9e <unknown>
+#10 0x560c5dd81d0b <unknown>
+#11 0x560c5dd85c92 <unknown>
+#12 0x560c5dd6eb3c <unknown>
+#13 0x560c5dd86807 <unknown>
+#14 0x560c5dd540df <unknown>
+#15 0x560c5dda3578 <unknown>
+#16 0x560c5dda3740 <unknown>
+#17 0x560c5ddb3196 <unknown>
+#18 0x7f1bc28d1ac3 <unknown>
+
+2024-12-20 07:34:32 - INFO - Completed scraping. Total jobs found: 3
+2024-12-20 07:34:32 - INFO - Scraped 3 jobs
+2024-12-20 07:34:32 - INFO - Created DataFrame with 3 rows
+2024-12-20 07:34:33 - INFO - LinkedIn search completed
+2024-12-20 07:34:33 - INFO - Found 3 jobs. Saving results...
+2024-12-20 07:34:33 - INFO - Results saved to: job_search_results/seo_manager/seo_manager__js_140000__jt_full_time_st_exact_jr_True_20241220.csv
+2024-12-20 07:34:33 - INFO - Results saved to: job_search_results/seo_manager/seo_manager__js_140000__jt_full_time_st_exact_jr_True_20241220.csv
+2024-12-20 07:34:33 - INFO - Job run logged to: job_search_results/jobs_ran.csv
+2024-12-20 07:34:33 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7faed198b9d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/bd63998fff945c638604104b5584175d
+2024-12-20 07:34:33 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7faed198b220>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/bd63998fff945c638604104b5584175d
+2024-12-20 07:34:33 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7faed198a350>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/bd63998fff945c638604104b5584175d
+2024-12-20 07:43:09 - INFO - Starting job search for: SEO Manager
+2024-12-20 07:43:09 - INFO - Getting search parameters...
+2024-12-20 07:43:12 - INFO - Selected parameters: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:43:12 - INFO - Search parameters received: {'salary_range': 140000, 'job_type': 'full_time', 'search_type': 'exact', 'remote_status': True}
+2024-12-20 07:43:12 - INFO - Creating search directory...
+2024-12-20 07:43:12 - INFO - Created search directory: job_search_results/seo_manager
+2024-12-20 07:43:12 - INFO - Search folder created: job_search_results/seo_manager
+2024-12-20 07:43:12 - INFO - Starting LinkedIn search...
+2024-12-20 07:43:12 - INFO - Starting LinkedIn search for SEO Manager
+2024-12-20 07:43:12 - INFO - Setting up Chrome options...
+2024-12-20 07:43:12 - INFO - Initializing Chrome driver...
+2024-12-20 07:43:13 - INFO - Chrome driver initialized successfully
+2024-12-20 07:43:13 - INFO - Driver setup complete
+2024-12-20 07:43:13 - INFO - Generated URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:43:13 - INFO - Attempting to navigate to URL: https://www.linkedin.com/jobs/search/?keywords=%22seo manager%22&f_WT=2&f_SB2=6&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true
+2024-12-20 07:43:13 - INFO - Navigating to LinkedIn main page...
+2024-12-20 07:43:20 - INFO - Loading cookies...
+2024-12-20 07:43:20 - INFO - Cookie file read successfully
+2024-12-20 07:43:20 - INFO - Successfully parsed 25 cookies
+2024-12-20 07:43:20 - INFO - Loading cookies...
+2024-12-20 07:43:20 - WARNING - Error adding cookie lms_ads
+2024-12-20 07:43:20 - WARNING - Error adding cookie unknown
+2024-12-20 07:43:20 - INFO - Successfully loaded 23 cookies
+2024-12-20 07:43:27 - INFO - Cookies loaded, waiting for page load...
+2024-12-20 07:43:32 - INFO - Navigating to search URL...
+2024-12-20 07:43:40 - INFO - Starting job scraping...
+2024-12-20 07:43:40 - INFO - Starting job scraping...
+2024-12-20 07:43:47 - INFO - Scraping page 1
+2024-12-20 07:43:52 - INFO - Found 3 job cards on page 1
+2024-12-20 07:43:52 - INFO - Processed job: Technical SEO Manager
+2024-12-20 07:43:53 - INFO - Processed job: SEO Manager
+2024-12-20 07:43:53 - INFO - Processed job: SEO Manager
+2024-12-20 07:43:53 - INFO - No more pages left
+2024-12-20 07:43:53 - INFO - Completed scraping. Total jobs found: 3
+2024-12-20 07:43:53 - INFO - Scraped 3 jobs
+2024-12-20 07:43:53 - INFO - Created DataFrame with 3 rows
+2024-12-20 07:43:53 - INFO - LinkedIn search completed
+2024-12-20 07:43:53 - INFO - Found 3 jobs. Saving results...
+2024-12-20 07:43:53 - INFO - Results saved to: job_search_results/seo_manager/seo_manager__js_140000__jt_full_time_st_exact_jr_True_20241220.csv
+2024-12-20 07:43:53 - INFO - Job run logged to: job_search_results/jobs_ran.csv
+2024-12-20 07:43:53 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f2d31f539d0>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/8dafe1c417a7a34f15828ced8b2636e9
+2024-12-20 07:43:53 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f2d31f53220>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/8dafe1c417a7a34f15828ced8b2636e9
+2024-12-20 07:43:53 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f2d31f52350>: Failed to establish a new connection: [Errno 111] Connection refused')': /session/8dafe1c417a7a34f15828ced8b2636e9

@@ -1,3 +1,4 @@
+import argparse
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -12,36 +13,61 @@ import re
 import json
 import logging
 import os
+from datetime import datetime
+import subprocess
+from utils import load_cookie_data
+
+
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,  # Set to INFO to suppress DEBUG messages
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 def random_delay(base=1, variance=1):
     time.sleep(base + random.uniform(0, variance))
 
-# Initialize undetected ChromeDriver options
-options = uc.ChromeOptions()
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-blink-features=AutomationControlled')
-options.add_argument('--disable-dev-shm-usage')
-options.add_argument('--window-size=1920,1080')
-options.add_argument('--disable-extensions')
-options.add_argument('--disable-gpu')
-options.add_argument('start-maximized')
-options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36')
-# options.add_argument('--headless=new')  # Enables headless mode
+def get_chrome_version():
+    """Get the version of Chrome installed on the system."""
+    try:
+        version = subprocess.check_output(['google-chrome', '--version'])
+        return version.decode().strip().split()[-1]
+    except:
+        return None
 
-# Start undetected ChromeDriver
-driver = uc.Chrome(options=options)
-
-# Disable WebDriver detection
-driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+def setup_driver():
+    """Initialize and return Chrome driver with proper settings."""
+    options = uc.ChromeOptions()
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-gpu')
+    options.add_argument('start-maximized')
+    options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36')
+    
+    try:
+        chrome_version = get_chrome_version()
+        driver = uc.Chrome(
+            options=options,
+            version_main=int(chrome_version.split('.')[0]) if chrome_version else None,
+            use_subprocess=True
+        )
+        # Disable WebDriver detection
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        return driver
+    except Exception as e:
+        logging.error(f"Error initializing Chrome: {e[:25]}")
+        raise
 
 def parse_cookies(raw_cookie_data):
     try:
         return json.loads(raw_cookie_data)
     except json.JSONDecodeError as e:
-        logging.error(f"Error decoding JSON: {e}")
+        logging.error(f"Error decoding JSON: {e[:25]}")
         return None
 
 def load_cookies(driver, cookies):
@@ -61,7 +87,7 @@ def load_cookies(driver, cookies):
                 "httpOnly": cookie.get("httpOnly", False),
             })
         except KeyError as e:
-            logging.error(f"Skipping cookie due to missing field: {e}")
+            logging.error(f"Skipping cookie due to missing field: {e[:25]}")
     driver.refresh()
 
 
@@ -203,404 +229,98 @@ def get_job_details(driver, url):
         print(f"Failed to retrieve details from {url}: {e}")
         return "-", "-", "-", "-", "-", "Onsite", "-"
 
-def load_job_links(filepath):
+def load_job_links(filename):
+    """Load job links from the CSV file."""
     try:
-        logging.info(f"Loading job URLs from {filepath}")
-        df = pd.read_csv(filepath)
-        return df, df['job_url'].tolist()
+        # Create job_results directory if it doesn't exist
+        os.makedirs("./job_results", exist_ok=True)
+        
+        # Check if input file exists
+        if not os.path.exists(filename):
+            logging.warning(f"Input file {filename[:25]} does not exist.")
+            return pd.DataFrame(), []  # Return empty DataFrame and list
+            
+        # Load the CSV file
+        df = pd.read_csv(filename)
+        links = df['job_url'].tolist() if 'job_url' in df.columns else []
+        logging.info(f"Successfully loaded {len(links)} job links from {filename[:25]}")
+        return df, links
+        
     except Exception as e:
-        logging.error(f"Error loading job links: {e}")
-        return None, []
+        logging.error(f"Error loading job links: {e[:25]}")
+        return pd.DataFrame(), []  # Return empty DataFrame and list on error
+
+def save_job_details(df, job_title):
+    try:
+        # Create base folder structure
+        folder_store = f"./job_results/{job_title.lower()}"
+        os.makedirs(folder_store, exist_ok=True)
+        
+        # Generate filename with same structure
+        current_date = datetime.now().strftime('%Y%m%d')
+        filename = f"{job_title.lower()}_details_{current_date}.csv"
+        full_path = os.path.join(folder_store, filename)
+        
+        df.to_csv(full_path, index=False)
+        logging.info(f"Job details saved to: {full_path[:25]}")
+        return full_path
+    except Exception as e:
+        logging.error(f"Error saving job details: {e}")
+        raise
+
+def process_job_links(driver, links, job_title):
+    """Process each job link and save results."""
+    results = []
+    for url in links:
+        try:
+            logging.info(f"Processing URL: {url[:25]}")
+            job_details = get_job_details(driver, url)
+            if job_details[0] != "-":  # Only add if we got valid details
+                results.append(job_details)
+        except Exception as e:
+            logging.error(f"Error processing URL {url[:25]}: {e}")
+            continue
+    
+    if not results:
+        logging.warning("No valid job details were collected")
+        return
+    
+    # Create DataFrame and save results
+    df = pd.DataFrame(results, columns=['job_title', 'company', 'description', 
+                                      'date_posted', 'location', 'remote', 'salary'])
+    save_job_details(df, job_title)
+
+def main(job_title, input_filename):
+    """Main function to process job details."""
+    try:
+        # Load job links from input file
+        df, links = load_job_links(input_filename)
+        if not links:
+            logging.warning("No job links found to process.")
+            return
+
+        # Initialize driver
+        driver = setup_driver()
+        
+        try:
+            # Load cookies from file
+            cookies = load_cookie_data()
+            load_cookies(driver, cookies)
+            
+            # Process job links
+            process_job_links(driver, links, job_title)
+            
+        finally:
+            driver.quit()
+            
+    except Exception as e:
+        logging.error(f"Error in main processing: {e[:25]}")
+        raise
 
 if __name__ == "__main__":
-    try:
-        folder_store = "./job_results"  # Specify the folder to store the results
-        os.makedirs(folder_store, exist_ok=True)
-        filename = "seo_job_details.csv"
-        raw_cookies = raw_cookies = """[
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1741383904.36598,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "li_sugr",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "c20e8f8c-5f72-42f3-ad0b-678bb65c18bf",
-            "index": 0,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1765143904.366038,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "bcookie",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "\\"v=2&fa999eb5-94ad-46ef-8730-f53e1e3feec2\\"",
-            "index": 1,
-            "isSearch": false
-        },
-        {
-            "domain": ".www.linkedin.com",
-            "expirationDate": 1765142659.398183,
-            "hostOnly": false,
-            "httpOnly": true,
-            "name": "bscookie",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "\\"v=1&20241104201120b5a13ddb-f552-473c-8a60-ae7321b60f7bAQEJuEVt9O1O-HbieYteOnQUOgk2u-qC\\"",
-            "index": 2,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "lang",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": true,
-            "storeId": "0",
-            "value": "v=2&lang=en-us",
-            "index": 3,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "AMCVS_14215E3D5995C57C0A495C55%40AdobeOrg",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": false,
-            "session": true,
-            "storeId": "0",
-            "value": "1",
-            "index": 4,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1736199905,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "aam_uuid",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": false,
-            "session": false,
-            "storeId": "0",
-            "value": "30910866105047617252535806206296647870",
-            "index": 5,
-            "isSearch": false
-        },
-        {
-            "domain": "www.linkedin.com",
-            "expirationDate": 1749158643,
-            "hostOnly": true,
-            "httpOnly": false,
-            "name": "g_state",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": false,
-            "session": false,
-            "storeId": "0",
-            "value": "{\\"i_l\\":0}",
-            "index": 6,
-            "isSearch": false
-        },
-        {
-            "domain": "www.linkedin.com",
-            "expirationDate": 1749158643,
-            "hostOnly": true,
-            "httpOnly": false,
-            "name": "g_state",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": false,
-            "session": false,
-            "storeId": "0",
-            "value": "{\\"i_l\\":0}",
-            "index": 6,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1741382655.29172,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "liap",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "true",
-            "index": 7,
-            "isSearch": false
-        },
-        {
-            "domain": ".www.linkedin.com",
-            "expirationDate": 1765142655.291731,
-            "hostOnly": false,
-            "httpOnly": true,
-            "name": "li_at",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "AQEDAQ0wUFwBmUY7AAABk6MCRlIAAAGTxw7KUk0ACB7oe6JKdQtHgS7_3cl3f57BKeM5KYs557H-bIyKBAzB8879W4iZoji8FmR_gIV8mw0XgUVBt7cL_4Us4Ikx3X3HeRjmO9Em52ALtPy3sXiIDfRd",
-            "index": 8,
-            "isSearch": false
-        },
-        {
-            "domain": ".www.linkedin.com",
-            "expirationDate": 1741382655.291739,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "JSESSIONID",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "\\"ajax:0111097221632539464\\"",
-            "index": 9,
-            "isSearch": false
-        },
-        {
-            "domain": ".www.linkedin.com",
-            "expirationDate": 1734817502,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "timezone",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "America/Phoenix",
-            "index": 10,
-            "isSearch": false
-        },
-        {
-            "domain": ".www.linkedin.com",
-            "expirationDate": 1749159902,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "li_theme",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "light",
-            "index": 11,
-            "isSearch": false
-        },
-        {
-            "domain": ".www.linkedin.com",
-            "expirationDate": 1749159902,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "li_theme_set",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "app",
-            "index": 12,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1736198659.120568,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "AnalyticsSyncHistory",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "AQLo6VlYYEvIfwAAAZOjAlXMlTJE1fysvvWc_N6FAQrVGI5-Ej1rRnuf22n8zYicrslEQXRsogaSZP_2pSHWeA",
-            "index": 13,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1741382659.131206,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "_guid",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "b063fabc-919b-4880-8f16-a6fbe1d475ca",
-            "index": 14,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1736198659.398116,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "lms_ads",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0"
-        },
-        {
-            "value": "AQEAwqsDZC--EwAAAZOjAlZI024x6IbppSD4bhjP9MZrySxKYKumfH32ne6gFeeMGzrKthp3WHmnrnuVg47XLA7-8Df1aJdE",
-            "index": 15,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1736198659.398155,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "lms_analytics",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "AQEAwqsDZC--EwAAAZOjAlZI024x6IbppSD4bhjP9MZrySxKYKumfH32ne6gFeeMGzrKthp3WHmnrnuVg47XLA7-8Df1aJdE",
-            "index": 16,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1765142660.633248,
-            "hostOnly": false,
-            "httpOnly": true,
-            "name": "dfpfpt",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "5a73d79e1ef046afad2070ce8cd32b5b",
-            "index": 17,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1749158659,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "AMCV_14215E3D5995C57C0A495C55%40AdobeOrg",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": false,
-            "session": false,
-            "storeId": "0",
-            "value": "-637568504%7CMCIDTS%7C20065%7CMCMID%7C30384012625251334942594022204613598069%7CMCAAMLH-1734211459%7C9%7CMCAAMB-1734211459%7C6G1ynYcLPuiQxYZrsz_pkqfLG9yMXBpb2zX5dvJdYQJzPXImdj0y%7CMCOPTOUT-1733613859s%7CNONE%7CvVersion%7C5.1.1%7CMCCIDH%7C-1477720840",
-            "index": 18,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1741382660,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "_gcl_au",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": false,
-            "session": false,
-            "storeId": "0",
-            "value": "1.1.1286571137.1733606660",
-            "index": 19,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "hostOnly": false,
-            "httpOnly": true,
-            "name": "fptctx2",
-            "path": "/",
-            "sameSite": "unspecified",
-            "secure": true,
-            "session": true,
-            "storeId": "0",
-            "value": "taBcrIH61PuCVH7eNCyH0CYjjbqLuI8XF8pleSQW5Nbzf1Mh%252bpcP6o%252bMsCxxtrGwW2%252fj6kFwTXl2N%252bkEPUXC8KRA%252bDTsuO0tl1Kcbxw2PKeJa57tDfi9oOsySZsIn7%252fzxVaUEJi0JXBsW%252fYIy0kJsR9dtS%252bJRzo9ICTgM90jlHB847c1PmgsTCTn5bm%252bKGkrv0azXQAEYME8ntbSXBSsR6Ag4tIKv8UtJ3hSJULlUeDN%252b86PIkRQI6NJXhZj0Sl94AJpYh2PkqDlC0WjwZRMBuvEZZA4KKQAP4CFQjCHK4C2FmAUeLkiX1XQy8Yqh6v6Wlx9z2wdQoGyTyibCvTnKyqi733%252fewmggc754YC4bDI%253d",
-            "index": 20,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1736199904,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "UserMatchHistory",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "AQI2G6NiuLIJ_AAAAZOjFVTb8yCuCF8FV-wmDjCDk9ezZHR0MH9WUKrThqL5LE23nsxWgBxcxw8HQaWbrDbBkWkQqPHcYaKR-tjzJsTPmlTkxS2dJMy-bAdDLjAWnxItL94w140vdeQkOENX4id72qK-cHG7nT8WvBT9ydU2h6z9TRXez2h2UUtkk5oy98zWvc2TPs52fUIgwI_zgLO4n6Vi_1a74thYP2U9o9_tr4LPBFe3aZz3MK0tRxzftTlp-dnnbmUeWO53De26-LN0SVgk_g0YgBBwDiYEUrbxzkkto9hL6zMuZIOu-7TQ9rVXbqhqOsishCk1-JujV8LnGTzzvY5gZcAV8301K8kVFcCxyKeS8w",
-            "index": 21,
-            "isSearch": false
-        },
-        {
-            "domain": ".linkedin.com",
-            "expirationDate": 1733655444.973652,
-            "hostOnly": false,
-            "httpOnly": false,
-            "name": "lidc",
-            "path": "/",
-            "sameSite": "no_restriction",
-            "secure": true,
-            "session": false,
-            "storeId": "0",
-            "value": "\\"b=OB08:s=O:r=O:a=O:p=O:g=4862:u=1709:x=1:i=1733607905:t=1733655445:v=2:sig=AQHNB2IfUX_NM71j-zT38PiAj7gNSHWu\\"",
-            "index": 22,
-            "isSearch": false
-        }
-        ]"""
-        cookies = parse_cookies(raw_cookies)
-
-        load_cookies(driver, cookies)
-        df_jobs, job_links = load_job_links('C:\\Users\\vasil\\OneDrive\\Desktop\\gProjects\\gJobSearch\\job_search_results\\seo\\seo_20241209.csv')
-
-        if not job_links:
-            logging.warning("No job links found.")
-            exit()
-
-        results = []
-        for link in job_links:
-            result = get_job_details(driver, link)
-            results.append(result)
-
-        # Convert results to a DataFrame and export to CSV
-        results_df = pd.DataFrame(results, columns=[
-            "job_title", "company_name", "job_description", "date_posted", "location", "remote_status", "salary"
-        ])
-        output_file = os.path.join(folder_store, filename)
-        results_df.to_csv(output_file, index=False)
-        logging.info("Job details saved successfully.")
-
-    except Exception as e:
-        logging.critical(f"Unhandled exception occurred: {e}")
-    finally:
-        driver.quit()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--job_title", required=True)
+    parser.add_argument("--filename", required=True)
+    args = parser.parse_args()
+    
+    main(args.job_title, args.filename)

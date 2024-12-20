@@ -1,3 +1,5 @@
+import sys
+import argparse
 from seleniumbase import Driver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -12,632 +14,533 @@ import time
 import os
 from datetime import datetime
 import json
+import logging
+from utils import load_cookie_data
+from config import search_parameters
+import urllib3
+import uuid
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
-raw_cookies = """[
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1741383904.36598,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "li_sugr",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "c20e8f8c-5f72-42f3-ad0b-678bb65c18bf",
-        "index": 0,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1765143904.366038,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "bcookie",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "\\"v=2&fa999eb5-94ad-46ef-8730-f53e1e3feec2\\"",
-        "index": 1,
-        "isSearch": false
-    },
-    {
-        "domain": ".www.linkedin.com",
-        "expirationDate": 1765142659.398183,
-        "hostOnly": false,
-        "httpOnly": true,
-        "name": "bscookie",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "\\"v=1&20241104201120b5a13ddb-f552-473c-8a60-ae7321b60f7bAQEJuEVt9O1O-HbieYteOnQUOgk2u-qC\\"",
-        "index": 2,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "lang",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": true,
-        "storeId": "0",
-        "value": "v=2&lang=en-us",
-        "index": 3,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "AMCVS_14215E3D5995C57C0A495C55%40AdobeOrg",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": false,
-        "session": true,
-        "storeId": "0",
-        "value": "1",
-        "index": 4,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1736199905,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "aam_uuid",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": false,
-        "session": false,
-        "storeId": "0",
-        "value": "30910866105047617252535806206296647870",
-        "index": 5,
-        "isSearch": false
-    },
-    {
-        "domain": "www.linkedin.com",
-        "expirationDate": 1749158643,
-        "hostOnly": true,
-        "httpOnly": false,
-        "name": "g_state",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": false,
-        "session": false,
-        "storeId": "0",
-        "value": "{\\"i_l\\":0}",
-        "index": 6,
-        "isSearch": false
-    },
-    {
-        "domain": "www.linkedin.com",
-        "expirationDate": 1749158643,
-        "hostOnly": true,
-        "httpOnly": false,
-        "name": "g_state",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": false,
-        "session": false,
-        "storeId": "0",
-        "value": "{\\"i_l\\":0}",
-        "index": 6,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1741382655.29172,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "liap",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "true",
-        "index": 7,
-        "isSearch": false
-    },
-    {
-        "domain": ".www.linkedin.com",
-        "expirationDate": 1765142655.291731,
-        "hostOnly": false,
-        "httpOnly": true,
-        "name": "li_at",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "AQEDAQ0wUFwBmUY7AAABk6MCRlIAAAGTxw7KUk0ACB7oe6JKdQtHgS7_3cl3f57BKeM5KYs557H-bIyKBAzB8879W4iZoji8FmR_gIV8mw0XgUVBt7cL_4Us4Ikx3X3HeRjmO9Em52ALtPy3sXiIDfRd",
-        "index": 8,
-        "isSearch": false
-    },
-    {
-        "domain": ".www.linkedin.com",
-        "expirationDate": 1741382655.291739,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "JSESSIONID",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "\\"ajax:0111097221632539464\\"",
-        "index": 9,
-        "isSearch": false
-    },
-    {
-        "domain": ".www.linkedin.com",
-        "expirationDate": 1734817502,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "timezone",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "America/Phoenix",
-        "index": 10,
-        "isSearch": false
-    },
-    {
-        "domain": ".www.linkedin.com",
-        "expirationDate": 1749159902,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "li_theme",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "light",
-        "index": 11,
-        "isSearch": false
-    },
-    {
-        "domain": ".www.linkedin.com",
-        "expirationDate": 1749159902,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "li_theme_set",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "app",
-        "index": 12,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1736198659.120568,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "AnalyticsSyncHistory",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "AQLo6VlYYEvIfwAAAZOjAlXMlTJE1fysvvWc_N6FAQrVGI5-Ej1rRnuf22n8zYicrslEQXRsogaSZP_2pSHWeA",
-        "index": 13,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1741382659.131206,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "_guid",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "b063fabc-919b-4880-8f16-a6fbe1d475ca",
-        "index": 14,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1736198659.398116,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "lms_ads",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0"
-    },
-    {
-        "value": "AQEAwqsDZC--EwAAAZOjAlZI024x6IbppSD4bhjP9MZrySxKYKumfH32ne6gFeeMGzrKthp3WHmnrnuVg47XLA7-8Df1aJdE",
-        "index": 15,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1736198659.398155,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "lms_analytics",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "AQEAwqsDZC--EwAAAZOjAlZI024x6IbppSD4bhjP9MZrySxKYKumfH32ne6gFeeMGzrKthp3WHmnrnuVg47XLA7-8Df1aJdE",
-        "index": 16,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1765142660.633248,
-        "hostOnly": false,
-        "httpOnly": true,
-        "name": "dfpfpt",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "5a73d79e1ef046afad2070ce8cd32b5b",
-        "index": 17,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1749158659,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "AMCV_14215E3D5995C57C0A495C55%40AdobeOrg",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": false,
-        "session": false,
-        "storeId": "0",
-        "value": "-637568504%7CMCIDTS%7C20065%7CMCMID%7C30384012625251334942594022204613598069%7CMCAAMLH-1734211459%7C9%7CMCAAMB-1734211459%7C6G1ynYcLPuiQxYZrsz_pkqfLG9yMXBpb2zX5dvJdYQJzPXImdj0y%7CMCOPTOUT-1733613859s%7CNONE%7CvVersion%7C5.1.1%7CMCCIDH%7C-1477720840",
-        "index": 18,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1741382660,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "_gcl_au",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": false,
-        "session": false,
-        "storeId": "0",
-        "value": "1.1.1286571137.1733606660",
-        "index": 19,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "hostOnly": false,
-        "httpOnly": true,
-        "name": "fptctx2",
-        "path": "/",
-        "sameSite": "unspecified",
-        "secure": true,
-        "session": true,
-        "storeId": "0",
-        "value": "taBcrIH61PuCVH7eNCyH0CYjjbqLuI8XF8pleSQW5Nbzf1Mh%252bpcP6o%252bMsCxxtrGwW2%252fj6kFwTXl2N%252bkEPUXC8KRA%252bDTsuO0tl1Kcbxw2PKeJa57tDfi9oOsySZsIn7%252fzxVaUEJi0JXBsW%252fYIy0kJsR9dtS%252bJRzo9ICTgM90jlHB847c1PmgsTCTn5bm%252bKGkrv0azXQAEYME8ntbSXBSsR6Ag4tIKv8UtJ3hSJULlUeDN%252b86PIkRQI6NJXhZj0Sl94AJpYh2PkqDlC0WjwZRMBuvEZZA4KKQAP4CFQjCHK4C2FmAUeLkiX1XQy8Yqh6v6Wlx9z2wdQoGyTyibCvTnKyqi733%252fewmggc754YC4bDI%253d",
-        "index": 20,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1736199904,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "UserMatchHistory",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "AQI2G6NiuLIJ_AAAAZOjFVTb8yCuCF8FV-wmDjCDk9ezZHR0MH9WUKrThqL5LE23nsxWgBxcxw8HQaWbrDbBkWkQqPHcYaKR-tjzJsTPmlTkxS2dJMy-bAdDLjAWnxItL94w140vdeQkOENX4id72qK-cHG7nT8WvBT9ydU2h6z9TRXez2h2UUtkk5oy98zWvc2TPs52fUIgwI_zgLO4n6Vi_1a74thYP2U9o9_tr4LPBFe3aZz3MK0tRxzftTlp-dnnbmUeWO53De26-LN0SVgk_g0YgBBwDiYEUrbxzkkto9hL6zMuZIOu-7TQ9rVXbqhqOsishCk1-JujV8LnGTzzvY5gZcAV8301K8kVFcCxyKeS8w",
-        "index": 21,
-        "isSearch": false
-    },
-    {
-        "domain": ".linkedin.com",
-        "expirationDate": 1733655444.973652,
-        "hostOnly": false,
-        "httpOnly": false,
-        "name": "lidc",
-        "path": "/",
-        "sameSite": "no_restriction",
-        "secure": true,
-        "session": false,
-        "storeId": "0",
-        "value": "\\"b=OB08:s=O:r=O:a=O:p=O:g=4862:u=1709:x=1:i=1733607905:t=1733655445:v=2:sig=AQHNB2IfUX_NM71j-zT38PiAj7gNSHWu\\"",
-        "index": 22,
-        "isSearch": false
-    }
-]"""
-
-# Job titles and search settings
-job_titles = {
-    "seo": {
-        "job_type": "full_time",
-        "salary_range": 140000,
-        "search_type": "exact",
-        "remote_status": True,
-    },
-}
+# Reduce urllib3 retry logging noise
+urllib3.disable_warnings()
+logging.getLogger('urllib3.connectionpool').setLevel(logging.ERROR)
 
 def press_shift_tab(driver):
-    actions = ActionChains(driver)
-    actions.key_down(Keys.SHIFT).send_keys(Keys.TAB).key_up(Keys.SHIFT).perform()
-
-
-def parse_cookies(raw_cookie_data):
-    """Parses raw cookie JSON string into Python objects."""
+    """Simulates pressing Shift+Tab."""
     try:
-        cookies = json.loads(raw_cookie_data)
-        return cookies
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON: {e}")
-        with open("error_log.json", "w") as f:
-            f.write(raw_cookie_data)  # Save the erroneous raw_cookies to a file
-        return None
+        actions = ActionChains(driver)
+        actions.key_down(Keys.SHIFT).send_keys(Keys.TAB).key_up(Keys.SHIFT).perform()
+        logging.debug("Pressed Shift+Tab")
+    except Exception as e:
+        logging.error(f"Error pressing Shift+Tab: {e}")
 
 def load_cookies(driver, cookies):
     """Loads cookies into the Selenium browser."""
-    if not cookies:
-        print("No cookies to load.")
-        return
+    try:
+        if not cookies:
+            logging.warning("No cookies to load.")
+            return
 
-    driver.get("https://www.linkedin.com/feed/")
-    if "feed" not in driver.current_url:
-        print("Login failed. Check cookies or manual login required.")
-        time.sleep(30)  # Allow user to log in manually
-    else:
-        print("Login successful!")  # Navigate to LinkedIn first
+        logging.info("Loading cookies...")
+        cookies_loaded = 0
+        
+        for cookie in cookies:
+            try:
+                formatted_cookie = {
+                    "name": cookie["name"],
+                    "value": cookie["value"],
+                    "domain": cookie["domain"],
+                    "path": cookie.get("path", "/"),
+                    "secure": cookie.get("secure", False),
+                    "httpOnly": cookie.get("httpOnly", False),
+                }
+                driver.add_cookie(formatted_cookie)
+                cookies_loaded += 1
+            except Exception as e:
+                logging.warning(f"Error adding cookie {cookie.get('name', 'unknown')}")
+                continue
+                
+        logging.info(f"Successfully loaded {cookies_loaded} cookies")
+        driver.refresh()
+        time.sleep(5)
+        
+    except Exception as e:
+        logging.error(f"Error in load_cookies: {str(e)}")
+        raise
 
-    for cookie in cookies:
-        try:
-            formatted_cookie = {
-                "name": cookie["name"],
-                "value": cookie["value"],
-                "domain": cookie["domain"],
-                "path": cookie.get("path", "/"),
-                "secure": cookie.get("secure", False),
-                "httpOnly": cookie.get("httpOnly", False),
-            }
-            driver.add_cookie(formatted_cookie)
-        except KeyError as e:
-            print(f"Missing cookie field: {e} - Skipping cookie: {cookie}")
-    driver.refresh()
-    print("Cookies loaded successfully!")
 
 def generate_linkedin_job_url(job_title: str, settings: dict) -> str:
     """Generates LinkedIn job search URL based on job title and settings."""
-    base_url = "https://www.linkedin.com/jobs/search/"
-    keywords = f"%22{job_title.lower()}%22" if settings["search_type"] == "exact" else job_title.lower()
-    salary_param = "&f_SB2=6" if settings["salary_range"] >= 140000 else "&f_SB2=7"
-    remote_param = "&f_WT=2" if settings["remote_status"] else "&geoId=103644278"
-    return f"{base_url}?keywords={keywords}{remote_param}{salary_param}&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true"
+    try:
+        base_url = "https://www.linkedin.com/jobs/search/"
+        keywords = f"%22{job_title.lower()}%22" if settings["search_type"] == "exact" else job_title.lower()
+        salary_param = "&f_SB2=6" if settings["salary_range"] >= 140000 else "&f_SB2=7"
+        remote_param = "&f_WT=2" if settings["remote_status"] else "&geoId=103644278"
+        
+        url = f"{base_url}?keywords={keywords}{remote_param}{salary_param}&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true"
+        logging.info(f"Generated URL: {url}")
+        return url
+        
+    except Exception as e:
+        logging.error(f"Error generating LinkedIn URL: {e}")
+        raise
 
 
 def save_page_html(driver, file_name="page_source.html"):
-    """Saves the entire HTML of the current page to a file."""
+    """Saves the entire HTML of the current page to a file for debugging."""
     try:
-        # Get the page source
         page_html = driver.page_source
-        # Save to a file
         with open(file_name, "w", encoding="utf-8") as f:
             f.write(page_html)
-        print(f"Page HTML saved to {file_name}")
+        logging.info(f"Page HTML saved to {file_name}")
     except Exception as e:
-        print(f"Error saving page HTML: {e}")
+        logging.error(f"Error saving page HTML: {e}")
 
 
-def scrape_job_data(driver, url):
-    """Scrapes job data from a LinkedIn job search page."""
-    job_data = []
+def scrape_job_data(driver, url, max_pages=3):
+    """Scrapes job data from LinkedIn."""
+    jobs = []
     page = 1
-    max_pages = 5  # Limit to avoid infinite loops or over-scraping
-
-    load_cookies(driver, parse_cookies(raw_cookies))
-
-    # Verify login
-    driver.get("https://www.linkedin.com/feed/")
-    if "feed" not in driver.current_url:
-        print("Failed to log in using cookies. Check your cookie values.")
-        return job_data
-
-    driver.get(url)
-    press_shift_tab(driver)
-    time.sleep(random.uniform(5, 10))
-
-    while page <= max_pages:
-        try:
-            jobs_scrollable_container = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, "#main > div > div.scaffold-layout__list-detail-inner.scaffold-layout__list-detail-inner--grow > div.scaffold-layout__list")
-                )
-            )
-        except Exception as e:
-            print("Error locating job container:", e)
-            return job_data
-        time.sleep(random.uniform(5, 10))
-
-        try:
-            last_height = 0
-            while True:
-                # Scroll down slightly instead of fully to trigger loading
-                driver.execute_script("arguments[0].scrollTop += 300;", jobs_scrollable_container)
-                time.sleep(1)  # Small delay to allow content to load
-
-                new_height = driver.execute_script("return arguments[0].scrollHeight", jobs_scrollable_container)
-                print(f"Scrolling... last_height={last_height}, new_height={new_height}")
-                if new_height == last_height:
-                    break  # Exit if no more content is loaded
-                last_height = new_height
-                
-            for _ in range(10):  # Press the down key 10 times
-                driver.execute_script("arguments[0].scrollBy(0, 300);", jobs_scrollable_container)
-                time.sleep(1)
-
-            time.sleep(5)
-            
-            # Extract job cards
-            jobs_list = jobs_scrollable_container.find_elements(By.CSS_SELECTOR, ".job-card-container--clickable")
-            print(f"Found {len(jobs_list)} job cards on page {page}.")
-            
-            for idx, job in enumerate(jobs_list):
-                print(f"Job {idx + 1}: {job.text[:50]}")
-
-            for idx, job in enumerate(jobs_list):
-                driver.execute_script("arguments[0].scrollIntoView(true);", job)
-                print(f"Scrolled to job {idx + 1}: {job.text[:50]}")
-                try:
-                    jobs_list = driver.find_elements(By.CSS_SELECTOR, ".job-card-container--clickable")
-                    job = jobs_list[idx]
-                    
-                    try:
-                        # Find the job title element
-                        job_title_tag = job.find_element(By.CSS_SELECTOR, "a.job-card-container__link")
-                        
-                        # Extract only the visible text of the job title
-                        job_title = job_title_tag.get_attribute("aria-label")
-                        job_title = job_title.replace(" with verification", "")
-                    except NoSuchElementException:
-                        job_title = "Not Available"
-
-                    # Extracting job URL
-                    try:
-                        job_url_block = job.find_element(By.CSS_SELECTOR, "a.job-card-container__link")
-                        job_url = job_url_block.get_attribute("href")
-                        job_url = job_url.split("?")[0]
-                    except NoSuchElementException:
-                        job_url = "Not Available"
-
-                    # Extracting company name
-                    try:
-                        company_name = job.find_element(By.CSS_SELECTOR, "span.boAvmrAFfwZEHebYjctgTppwiEwazqIftEMU").text.strip()
-                    except NoSuchElementException:
-                        company_name = "Not Available"
-
-                    # Extracting location
-                    try:
-                        location = job.find_element(By.CSS_SELECTOR, "ul.job-card-container__metadata-wrapper li span").text.strip()
-                    except NoSuchElementException:
-                        location = "Not Available"
-
-                    # Extracting salary range if available
-                    try:
-                        salary_tag = job.find_element(By.CSS_SELECTOR, "div.artdeco-entity-lockup__metadata span")
-                        salary_range = salary_tag.text.strip()
-                    except NoSuchElementException:
-                        salary_range = "N/A"
-
-                    # Extracting remote status if available
-                    try:
-                        remote_status_element = job.find_element(By.XPATH, ".//*[contains(text(), 'Remote') or contains(text(), 'Onsite') or contains(text(), 'Hybrid')]")
-                        remote_status = remote_status_element.text.strip()
-                    except NoSuchElementException:
-                        remote_status = "Onsite"  # Default to Onsite if not found
-
-                    # Appending the job data to our list
-                    job_data.append({
-                        "company_title": company_name,
-                        "job_title": job_title,
-                        "job_url": job_url,
-                        "salary_range": salary_range,
-                        "location": location,
-                        "remote_status": remote_status
-                    })
-                except Exception as e:
-                    print(f"Error extracting data on page {page}: {e}")
-                    break  # Exit while loop after error
-
-            # Handle pagination
-            try:
-                next_page_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='View next page']"))
-                )
-                next_page_button.click()
-                print("Clicked on Next button.")
-                page += 1
-                time.sleep(random.uniform(2, 5))
-            except NoSuchElementException:
-                print(f"No next page button found on page {page}. Assuming no more pages.")
-                break
-            except Exception as e:
-                print(f"Error navigating to the next page...probably the last page.")
-                break
-        except Exception as e:
-            print(f"Error during page scraping: {e}")
-            break
-    # save_page_html(driver, file_name="full_page_after_scrolling.html")
-    return job_data
-
-"""Main function to scrape LinkedIn job data."""
-def main():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless=new")  # Enable headless mode
-    driver = Driver(uc=True)
-    
     try:
-        driver.set_window_size(1200, 3000)
-        all_jobs = []
-        for job_title, settings in job_titles.items():
-            url = generate_linkedin_job_url(job_title, settings)
-            jobs = scrape_job_data(driver, url)
-            if jobs:
-                all_jobs.extend(jobs)
-                # Save results
-                base_folder = "job_search_results"
-                search_folder = os.path.join(base_folder, job_title.lower())
-                os.makedirs(search_folder, exist_ok=True)
-                filename = os.path.join(
-                    search_folder,
-                    f"{job_title.lower()}_salary-{settings['salary_range']}_type-{settings['job_type'].lower()}_search-{settings['search_type'].lower()}_remote-{str(settings['remote_status']).lower()}_{datetime.now().strftime('%Y%m%d')}.csv"
-                )
+        logging.info("Starting job scraping...")
+        driver.get(url)
+        time.sleep(5)  # Wait for initial load
+        
+        while page <= max_pages:
+            logging.info(f"Scraping page {page}")
+            
+            # Updated selector to handle dynamic class name
+            jobs_container = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "div[class*='scaffold-layout__list']"))
+            )
+            
+            # Scroll through the jobs list
+            for i in range(5):  # Scroll in chunks
+                driver.execute_script("arguments[0].scrollBy(0, 300);", jobs_container)
+                time.sleep(1)
+            
+            # Get job cards
+            job_cards = jobs_container.find_elements(By.CSS_SELECTOR, "li.scaffold-layout__list-item")
+            logging.info(f"Found {len(job_cards)} job cards on page {page}")
+            
+            for job in job_cards:
+                try:
+                    job_data = extract_job_details(job)
+                    if job_data:
+                        jobs.append(job_data)
+                        logging.info(f"Processed job: {job_data.get('job_title', 'Unknown Title')}")
+                except Exception as e:
+                    logging.error(f"Error processing job card: {e}")
+                    continue
+            
+            # Try to go to next page
+            try:
+                next_button = driver.find_element(By.CSS_SELECTOR, "[aria-label='View next page']")
+                if not next_button.is_enabled():
+                    logging.info("No more pages left")
+                    break
+                next_button.click()
+                time.sleep(3)
+                page += 1
+            except Exception:
+                logging.info("No more pages left")
+                break
+                
+        logging.info(f"Completed scraping. Total jobs found: {len(jobs)}")
+        return jobs
+        
+    except Exception as e:
+        logging.error(f"Error in scrape_job_data: {e}")
+        return jobs
 
-                pd.DataFrame(jobs).to_csv(filename, index=False)
-                print(f"Saved jobs to {filename}")
+def get_search_parameters():
+    """Get search parameters from user input."""
+    try:
+        print("\nPlease select search parameters:")
+        
+        # Salary range selection
+        print("\nAvailable salary ranges:")
+        for i, salary in enumerate(search_parameters['salary_ranges'], 1):
+            print(f"{i}. ${salary:,}")
+        while True:
+            try:
+                salary_choice = int(input("Select salary range (number): ").strip())
+                if 1 <= salary_choice <= len(search_parameters['salary_ranges']):
+                    salary_range = search_parameters['salary_ranges'][salary_choice - 1]
+                    break
+                print("Invalid selection. Please try again.")
+            except ValueError:
+                print("Please enter a valid number.")
+        
+        # Job type selection
+        print("\nAvailable job types:")
+        for i, job_type in enumerate(search_parameters['job_types'], 1):
+            print(f"{i}. {job_type.replace('_', ' ').title()}")
+        while True:
+            try:
+                job_type_choice = int(input("Select job type (number): ").strip())
+                if 1 <= job_type_choice <= len(search_parameters['job_types']):
+                    job_type = search_parameters['job_types'][job_type_choice - 1]
+                    break
+                print("Invalid selection. Please try again.")
+            except ValueError:
+                print("Please enter a valid number.")
+        
+        # Search type selection
+        print("\nSearch types:")
+        for i, search_type in enumerate(search_parameters['search_types'], 1):
+            print(f"{i}. {search_type.title()}")
+        while True:
+            try:
+                search_type_choice = int(input("Select search type (number): ").strip())
+                if 1 <= search_type_choice <= len(search_parameters['search_types']):
+                    search_type = search_parameters['search_types'][search_type_choice - 1]
+                    break
+                print("Invalid selection. Please try again.")
+            except ValueError:
+                print("Please enter a valid number.")
+        
+        # Remote option selection
+        print("\nRemote options:")
+        for i, remote in enumerate(search_parameters['remote_options'], 1):
+            print(f"{i}. {'Remote' if remote == 'true' else 'On-site'}")
+        while True:
+            try:
+                remote_choice = int(input("Select remote option (number): ").strip())
+                if 1 <= remote_choice <= len(search_parameters['remote_options']):
+                    remote_status = search_parameters['remote_options'][remote_choice - 1]
+                    break
+                print("Invalid selection. Please try again.")
+            except ValueError:
+                print("Please enter a valid number.")
+        
+        params = {
+            "salary_range": salary_range,
+            "job_type": job_type,
+            "search_type": search_type,
+            "remote_status": remote_status == 'true'
+        }
+        
+        logging.info(f"Selected parameters: {params}")
+        return params
+        
+    except Exception as e:
+        logging.error(f"Error getting search parameters: {e}")
+        raise
 
-                # Log the job search parameters
-                log_filename = os.path.join(base_folder, "jobs_ran.csv")
-                job_run_data = {
-                    "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    "job_keyword": job_title,
-                    **settings,
-                    "total_jobs_found": len(jobs)
-                }
-                if os.path.exists(log_filename):
-                    pd.DataFrame([job_run_data]).to_csv(log_filename, mode='a', header=False, index=False)
-                else:
-                    pd.DataFrame([job_run_data]).to_csv(log_filename, index=False)
-                print(f"Logged job run to {log_filename}")
-            else:
-                print(f"No jobs found for {job_title}. Skipping file saving.")
+def create_search_directory(job_title):
+    """Create and return the search directory path."""
+    base_folder = "job_search_results"
+    # Replace spaces with underscores in job title
+    formatted_title = job_title.lower().replace(' ', '_')
+    search_folder = os.path.join(base_folder, formatted_title)
+    os.makedirs(search_folder, exist_ok=True)
+    logging.info(f"Created search directory: {search_folder}")
+    return search_folder
+
+def generate_file_id():
+    """Generate a unique file identifier."""
+    # Create a random UUID and take first 8 characters
+    random_id = str(uuid.uuid4())[:8]
+    # Add timestamp for additional uniqueness
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    return f"_{random_id}_{timestamp}"
+
+def save_results(jobs, job_title):
+    """Save job results to files with random identifier."""
+    try:
+        # Generate unique identifier
+        file_id = generate_file_id()
+        
+        # Create filenames with the identifier
+        json_filename = f"job_search_results/linkedin_jobs{file_id}.json"
+        csv_filename = f"job_search_results/linkedin_jobs{file_id}.csv"
+        
+        # Save as JSON
+        with open(json_filename, 'w', encoding='utf-8') as f:
+            json.dump(jobs, f, indent=2, ensure_ascii=False)
+        logging.info(f"Results saved to {json_filename}")
+        
+        # Save as CSV
+        if jobs:
+            df = pd.DataFrame(jobs)
+            df.to_csv(csv_filename, index=False, encoding='utf-8')
+            logging.info(f"Results saved to {csv_filename}")
+            
+        return json_filename, csv_filename
+        
+    except Exception as e:
+        logging.error(f"Error saving results: {e}")
+        raise
+
+def perform_linkedin_search(job_title, search_params):
+    """Perform LinkedIn job search and return results as DataFrame."""
+    driver = None
+    try:
+        logging.info(f"Starting LinkedIn search for {job_title}")
+        driver = setup_driver()
+        logging.info("Driver setup complete")
+        
+        url = generate_linkedin_job_url(job_title, search_params)
+        logging.info(f"Attempting to navigate to URL: {url}")
+        
+        # First navigate to LinkedIn
+        logging.info("Navigating to LinkedIn main page...")
+        driver.get("https://www.linkedin.com")
+        time.sleep(5)
+        
+        # Load cookies
+        logging.info("Loading cookies...")
+        cookies = load_cookie_data()
+        load_cookies(driver, cookies)
+        logging.info("Cookies loaded, waiting for page load...")
+        time.sleep(5)
+        
+        # Now navigate to the search URL
+        logging.info("Navigating to search URL...")
+        driver.get(url)
+        time.sleep(5)
+        
+        # Scrape the data
+        logging.info("Starting job scraping...")
+        jobs = scrape_job_data(driver, url)
+        logging.info(f"Scraped {len(jobs)} jobs")
+        
+        if not jobs:
+            logging.warning("No jobs found")
+            return pd.DataFrame()
+        
+        # Convert to DataFrame
+        df = pd.DataFrame(jobs)
+        logging.info(f"Created DataFrame with {len(df)} rows")
+        return df
+        
+    except Exception as e:
+        logging.error(f"Error in LinkedIn search: {e}")
+        logging.error("Stack trace:", exc_info=True)
+        return pd.DataFrame()
     finally:
-        driver.quit()
-        pass
+        if driver:
+            try:
+                driver.quit()
+            except Exception as e:
+                logging.error(f"Error closing driver: {e}")
+
+def setup_driver():
+    """Initialize and return Chrome driver with proper settings."""
+    try:
+        logging.info("Setting up Chrome options...")
+        
+        # Initialize driver with undetected_chromedriver
+        driver = Driver(uc=True)
+        
+        # Set window size for better job listing visibility
+        driver.set_window_size(1440, 8000)
+        
+        # Execute stealth JavaScript
+        driver.execute_cdp_cmd('Network.setUserAgentOverride', {
+            "userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        })
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        
+        logging.info("Chrome driver initialized successfully")
+        return driver
+        
+    except Exception as e:
+        logging.error(f"Error initializing Chrome driver: {e}")
+        raise
+
+
+def get_dynamic_selectors(driver):
+    """Determine the current dynamic class names by analyzing the page structure."""
+    try:
+        # Get the first job card to analyze
+        first_job = driver.find_element(By.CSS_SELECTOR, "li[class*='occludable-update']")
+        
+        # Dictionary to store our dynamic selectors
+        selectors = {}
+        
+        # Find company element by its structural position and store its class
+        company_elements = first_job.find_elements(By.CSS_SELECTOR, "span[dir='ltr']")
+        for element in company_elements:
+            # Verify this is the company element by checking its parent or content
+            if element.find_element(By.XPATH, "..").get_attribute("class").contains("artdeco-entity-lockup__subtitle"):
+                selectors['company_class'] = element.get_attribute("class")
+                break
+                
+        # Store other dynamic classes as needed
+        # ... similar pattern for other elements
+        
+        logging.info("Successfully determined dynamic selectors")
+        return selectors
+        
+    except Exception as e:
+        logging.error(f"Error determining dynamic selectors: {e}")
+        return None
+
+
+def extract_job_details(job, selectors=None):
+    """Extract details from a job card element."""
+    try:
+        # Get job title
+        try:
+            
+            job_title_element = job.find_element(By.CSS_SELECTOR, "a[class*='job-card-container__link'] span[aria-hidden='true'] strong")
+            job_title = job_title_element.text.strip()
+            if not job_title:
+                job_title_link = job.find_element(By.CSS_SELECTOR, "a[class*='job-card-container__link']")
+                job_title = job_title_link.get_attribute("aria-label")
+                job_title = job_title.replace(" with verification", "") if job_title else "Not Available"
+            
+        except NoSuchElementException:
+            job_title = "Not Available"
+
+        if not job_title or job_title == "Not Available":
+            logging.warning(f"Could not find job title for a listing")
+
+        # Job URL
+        try:
+            job_url_block = job.find_element(By.CSS_SELECTOR, "a.job-card-container__link")
+            job_url = job_url_block.get_attribute("href")
+            job_url = job_url.split("?")[0]
+        except NoSuchElementException:
+            job_url = "Not Available"
+
+
+        # Fallback selectors if dynamic ones aren't available
+        default_selectors = {
+            'company_class': 'dWJplLBRBAptgNcPwCBFsflKmzwrdqqy',
+        }
+        
+        current_selectors = selectors or default_selectors
+        
+        # Try multiple approaches to find company name
+        company_name = "Not Available"
+        try:
+            # Try dynamic class first
+            company_element = job.find_element(By.CSS_SELECTOR, f"span[class*='{current_selectors['company_class']}']")
+            company_name = company_element.text.strip()
+        except NoSuchElementException:
+            # Fallback approaches
+            try:
+                # Try by structure
+                company_element = job.find_element(By.CSS_SELECTOR, "div.artdeco-entity-lockup__subtitle span")
+                company_name = company_element.text.strip()
+            except NoSuchElementException:
+                # Try by XPath relative to job title
+                company_element = job.find_element(By.XPATH, ".//div[contains(@class, 'artdeco-entity-lockup__title')]/../div[contains(@class, 'artdeco-entity-lockup__subtitle')]//span")
+                company_name = company_element.text.strip()
+
+        # Location
+        try:
+            location = job.find_element(By.CSS_SELECTOR, "ul.job-card-container__metadata-wrapper li span").text.strip()
+        except NoSuchElementException:
+            location = "Not Available"
+
+        # Salary Range
+        try:
+            salary_tag = job.find_element(By.CSS_SELECTOR, "div.artdeco-entity-lockup__metadata span")
+            salary_range = salary_tag.text.strip()
+        except NoSuchElementException:
+            salary_range = "N/A"
+
+        # Remote Status
+        try:
+            remote_status_element = job.find_element(By.XPATH, ".//*[contains(text(), 'Remote') or contains(text(), 'Onsite') or contains(text(), 'Hybrid')]")
+            remote_status = remote_status_element.text.strip()
+        except NoSuchElementException:
+            remote_status = "Onsite"
+
+        return {
+            "company_title": company_name,
+            "job_title": job_title,
+            "job_url": job_url,
+            "salary_range": salary_range,
+            "location": location,
+            "remote_status": remote_status
+        }
+    except Exception as e:
+        logging.error(f"Error extracting job details: {e}")
+        return None
+
+def handle_pagination(driver, current_page):
+    """Handle pagination and return True if next page exists."""
+    try:
+        next_page_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='View next page']"))
+        )
+        next_page_button.click()
+        logging.info(f"Navigated to page {current_page + 1}")
+        return True
+    except NoSuchElementException:
+        logging.info(f"No next page button found on page {current_page}")
+        return False
+    except Exception as e:
+        logging.error(f"Error navigating to next page: {e}")
+        return False
+
+def main():
+    try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--job_title", required=True, help="Job title to search for")
+        args = parser.parse_args()
+        
+        logging.info(f"Starting job search for: {args.job_title}")
+        
+        # Get search parameters from user
+        logging.info("Getting search parameters...")
+        search_params = get_search_parameters()
+        logging.info(f"Search parameters received: {search_params}")
+        
+        # Create search directory
+        logging.info("Creating search directory...")
+        search_folder = create_search_directory(args.job_title)
+        logging.info(f"Search folder created: {search_folder}")
+        
+        # Perform LinkedIn search
+        logging.info("Starting LinkedIn search...")
+        df = perform_linkedin_search(args.job_title, search_params)
+        logging.info("LinkedIn search completed")
+        
+        if df is not None and not df.empty:
+            logging.info(f"Found {len(df)} jobs. Saving results...")
+            # Save results using the same search_folder
+            saved_path = save_results(df, args.job_title, search_params, search_folder)
+            
+            # Log the job search parameters
+            log_filename = os.path.join("job_search_results", "jobs_ran.csv")
+            job_run_data = {
+                "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                "job_keyword": args.job_title,
+                **search_params,
+                "total_jobs_found": len(df)
+            }
+            
+            if os.path.exists(log_filename):
+                pd.DataFrame([job_run_data]).to_csv(log_filename, mode='a', header=False, index=False)
+            else:
+                pd.DataFrame([job_run_data]).to_csv(log_filename, index=False)
+            logging.info(f"Job run logged to: {log_filename}")
+        else:
+            logging.warning("No results found or DataFrame is empty")
+            
+    except Exception as e:
+        logging.error(f"Error in main: {e}")
+        logging.error("Stack trace:", exc_info=True)
+        raise
 
 if __name__ == "__main__":
-    main()
+    try:
+        # Ensure output is properly flushed
+        sys.stdout.flush()
+        main()
+    except Exception as e:
+        logging.error(f"Script failed: {e}")
+        logging.error("Stack trace:", exc_info=True)
+        sys.exit(1)
