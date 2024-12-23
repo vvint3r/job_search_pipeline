@@ -1,4 +1,5 @@
 import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import argparse
 from seleniumbase import Driver
 from selenium.webdriver.chrome.options import Options
@@ -252,28 +253,48 @@ def generate_file_id():
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     return f"_{random_id}_{timestamp}"
 
-def save_results(jobs, job_title):
-    """Save job results to files with random identifier."""
+def save_results(df, job_title, search_params, search_folder="job_search_results"):
+    """Save job results with the correct naming convention."""
     try:
-        # Generate unique identifier
-        file_id = generate_file_id()
+        # Clean job title and ensure lowercase
+        job_title_clean = job_title.lower().replace(' ', '_')
         
-        # Create filenames with the identifier
-        json_filename = f"job_search_results/linkedin_jobs{file_id}.json"
-        csv_filename = f"job_search_results/linkedin_jobs{file_id}.csv"
+        # Create the directory if it doesn't exist
+        job_folder = os.path.join(search_folder, job_title_clean)
+        os.makedirs(job_folder, exist_ok=True)
         
-        # Save as JSON
-        with open(json_filename, 'w', encoding='utf-8') as f:
-            json.dump(jobs, f, indent=2, ensure_ascii=False)
-        logging.info(f"Results saved to {json_filename}")
+        # Format the filename components (all lowercase)
+        salary = f"js_{search_params['salary_range']}".lower()
+        job_type = f"jt_{search_params['job_type'].lower().replace(' ', '_')}"
+        search_type = f"st_{search_params['search_type'].lower()}"
+        remote = f"jr_{str(search_params['remote_status']).lower()}"
+        date_str = datetime.now().strftime('%Y%m%d')
         
-        # Save as CSV
-        if jobs:
-            df = pd.DataFrame(jobs)
-            df.to_csv(csv_filename, index=False, encoding='utf-8')
-            logging.info(f"Results saved to {csv_filename}")
-            
-        return json_filename, csv_filename
+        # Construct the filename (all lowercase)
+        filename = f"{job_title_clean}__{salary}__{job_type}_{search_type}_{remote}_{date_str}"
+        
+        # Save both CSV and JSON versions
+        csv_path = os.path.join(job_folder, f"{filename}.csv")
+        json_path = os.path.join(job_folder, f"{filename}.json")
+        
+        df.to_csv(csv_path, index=False)
+        logging.info(f"Results saved to {csv_path}")
+        
+        # Save as JSON with metadata
+        output_data = {
+            "metadata": {
+                "job_title": job_title_clean,
+                "search_params": search_params,
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            },
+            "jobs": df.to_dict('records')
+        }
+        
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(output_data, f, indent=2, ensure_ascii=False)
+        logging.info(f"Results saved to {json_path}")
+        
+        return csv_path
         
     except Exception as e:
         logging.error(f"Error saving results: {e}")
@@ -485,15 +506,40 @@ def handle_pagination(driver, current_page):
         logging.error(f"Error navigating to next page: {e}")
         return False
 
-def main():
+def parse_arguments():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description='LinkedIn Job Search')
+    parser.add_argument('--job_title', required=True, help='Job title to search for')
+    return parser.parse_args()
+
+def build_search_params(job_title):
+    """Build search parameters for LinkedIn URL."""
     try:
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--job_title", required=True, help="Job title to search for")
-        args = parser.parse_args()
+        # Get user input for search parameters
+        search_params = get_search_parameters()
         
+        # Generate the LinkedIn search URL
+        url = generate_linkedin_job_url(job_title, search_params)
+        
+        # Return complete search parameters
+        return {
+            'job_title': job_title,
+            'url': url,
+            'salary_range': search_params['salary_range'],
+            'job_type': search_params['job_type'],
+            'search_type': search_params['search_type'],
+            'remote_status': search_params['remote_status']
+        }
+    except Exception as e:
+        logging.error(f"Error building search parameters: {e}")
+        raise
+
+def main():
+    args = parse_arguments()
+    try:
         logging.info(f"Starting job search for: {args.job_title}")
         
-        # Get search parameters from user
+        # Get search parameters from user FIRST
         logging.info("Getting search parameters...")
         search_params = get_search_parameters()
         logging.info(f"Search parameters received: {search_params}")
@@ -527,8 +573,10 @@ def main():
             else:
                 pd.DataFrame([job_run_data]).to_csv(log_filename, index=False)
             logging.info(f"Job run logged to: {log_filename}")
+            return saved_path
         else:
             logging.warning("No results found or DataFrame is empty")
+            return None
             
     except Exception as e:
         logging.error(f"Error in main: {e}")

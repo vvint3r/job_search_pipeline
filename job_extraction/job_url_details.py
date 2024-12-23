@@ -1,3 +1,12 @@
+import time
+import random
+import pandas as pd
+import re
+import json
+import logging
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import argparse
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
@@ -6,13 +15,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-import time
-import random
-import pandas as pd
-import re
-import json
-import logging
-import os
 from datetime import datetime
 import subprocess
 from utils import load_cookie_data
@@ -39,35 +41,46 @@ def get_chrome_version():
 
 def setup_driver():
     """Initialize and return Chrome driver with proper settings."""
-    options = uc.ChromeOptions()
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--window-size=1920,1080')
-    options.add_argument('--disable-extensions')
-    options.add_argument('--disable-gpu')
-    options.add_argument('start-maximized')
-    options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36')
-    
     try:
+        logging.info("Starting Chrome driver setup...")
+        options = uc.ChromeOptions()
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-blink-features=AutomationControlled')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--window-size=1920,1080')
+        options.add_argument('--disable-extensions')
+        options.add_argument('--disable-gpu')
+        options.add_argument('start-maximized')
+        options.add_argument('--timeout=30')  # Add timeout
+        options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36')
+        
+        logging.info("Getting Chrome version...")
         chrome_version = get_chrome_version()
+        logging.info(f"Chrome version detected: {chrome_version}")
+        
+        logging.info("Initializing Chrome driver...")
         driver = uc.Chrome(
             options=options,
             version_main=int(chrome_version.split('.')[0]) if chrome_version else None,
             use_subprocess=True
         )
-        # Disable WebDriver detection
+        driver.set_page_load_timeout(30)  # 30 seconds timeout
+        
+        logging.info("Disabling WebDriver detection...")
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        
+        logging.info("Chrome driver setup complete")
         return driver
+        
     except Exception as e:
-        logging.error(f"Error initializing Chrome: {e[:25]}")
+        logging.error(f"Error in setup_driver: {str(e)}")
         raise
 
 def parse_cookies(raw_cookie_data):
     try:
         return json.loads(raw_cookie_data)
     except json.JSONDecodeError as e:
-        logging.error(f"Error decoding JSON: {e[:25]}")
+        logging.error(f"Error decoding JSON: {e}")
         return None
 
 def load_cookies(driver, cookies):
@@ -87,7 +100,7 @@ def load_cookies(driver, cookies):
                 "httpOnly": cookie.get("httpOnly", False),
             })
         except KeyError as e:
-            logging.error(f"Skipping cookie due to missing field: {e[:25]}")
+            logging.error(f"Skipping cookie due to missing field: {e}")
     driver.refresh()
 
 
@@ -224,17 +237,14 @@ def get_job_details(driver, url):
             print(f"Remote status not found, assuming Onsite")
             remote_status = 'Onsite'
 
-        return job_title, company_name, job_description, date_posted, location, remote_status, salary
+        return job_title, company_name, job_description, date_posted, location, remote_status, salary, url
     except Exception as e:
         print(f"Failed to retrieve details from {url}: {e}")
-        return "-", "-", "-", "-", "-", "Onsite", "-"
+        return "-", "-", "-", "-", "-", "Onsite", "-", url
 
 def load_job_links(filename):
     """Load job links from the CSV file."""
     try:
-        # Create job_results directory if it doesn't exist
-        os.makedirs("./job_results", exist_ok=True)
-        
         # Check if input file exists
         if not os.path.exists(filename):
             logging.warning(f"Input file {filename[:25]} does not exist.")
@@ -247,74 +257,106 @@ def load_job_links(filename):
         return df, links
         
     except Exception as e:
-        logging.error(f"Error loading job links: {e[:25]}")
+        logging.error(f"Error loading job links: {e}")
         return pd.DataFrame(), []  # Return empty DataFrame and list on error
 
 def save_job_details(df, job_title):
+    """Save job details with updated directory and formatting."""
     try:
+        # Clean job title for directory name
+        job_title_clean = job_title.lower().replace(' ', '_')
+        
         # Create base folder structure
-        folder_store = f"./job_results/{job_title.lower()}"
+        folder_store = f"./job_post_details/{job_title_clean}"
         os.makedirs(folder_store, exist_ok=True)
         
-        # Generate filename with same structure
+        # Generate filename with date and company
         current_date = datetime.now().strftime('%Y%m%d')
-        filename = f"{job_title.lower()}_details_{current_date}.csv"
+        
+        # Get company name from the first row (or 'unknown' if not available)
+        company_name = df['company'].iloc[0] if not df.empty else 'unknown'
+        company_name_clean = company_name.lower().replace(' ', '_').replace(',', '').replace('.', '')
+        
+        filename = f"{job_title_clean}_details_{current_date}_{company_name_clean}.csv"
         full_path = os.path.join(folder_store, filename)
         
         df.to_csv(full_path, index=False)
-        logging.info(f"Job details saved to: {full_path[:25]}")
+        logging.info(f"Job details saved to: {full_path}")
         return full_path
     except Exception as e:
         logging.error(f"Error saving job details: {e}")
         raise
 
 def process_job_links(driver, links, job_title):
-    """Process each job link and save results."""
+    """Process job links with updated column structure."""
     results = []
     for url in links:
         try:
-            logging.info(f"Processing URL: {url[:25]}")
+            logging.info(f"Processing URL: {url[:50]}")
             job_details = get_job_details(driver, url)
             if job_details[0] != "-":  # Only add if we got valid details
                 results.append(job_details)
         except Exception as e:
-            logging.error(f"Error processing URL {url[:25]}: {e}")
+            logging.error(f"Error processing URL {url[:50]}: {e}")
             continue
     
     if not results:
         logging.warning("No valid job details were collected")
         return
     
-    # Create DataFrame and save results
-    df = pd.DataFrame(results, columns=['job_title', 'company', 'description', 
-                                      'date_posted', 'location', 'remote', 'salary'])
-    save_job_details(df, job_title)
+    # Create DataFrame with updated columns including URL
+    df = pd.DataFrame(results, columns=[
+        'job_title', 'company', 'description', 'date_posted', 
+        'location', 'remote', 'salary', 'job_url'
+    ])
+    
+    # Clean job title for saving
+    job_title_clean = job_title.lower().replace(' ', '_')
+    save_job_details(df, job_title_clean)
 
 def main(job_title, input_filename):
-    """Main function to process job details."""
+    """Main function with cleaned job title."""
+    driver = None
     try:
+        # Clean job title
+        job_title_clean = job_title.lower().replace(' ', '_')
+        
         # Load job links from input file
+        logging.info(f"Loading job links from {input_filename}")
         df, links = load_job_links(input_filename)
         if not links:
             logging.warning("No job links found to process.")
             return
 
         # Initialize driver
+        logging.info("Initializing Chrome driver...")
         driver = setup_driver()
         
         try:
-            # Load cookies from file
+            # Load cookies
+            logging.info("Loading cookies...")
             cookies = load_cookie_data()
-            load_cookies(driver, cookies)
+            if cookies:
+                load_cookies(driver, cookies)
+            else:
+                logging.warning("No cookies loaded")
             
-            # Process job links
-            process_job_links(driver, links, job_title)
+            # Process job links with cleaned job title
+            logging.info("Starting to process job links...")
+            process_job_links(driver, links, job_title_clean)
             
         finally:
-            driver.quit()
-            
+            if driver:
+                logging.info("Closing Chrome driver...")
+                driver.quit()
+                
     except Exception as e:
-        logging.error(f"Error in main processing: {e[:25]}")
+        logging.error(f"Error in main processing: {str(e)}")
+        if driver:
+            try:
+                driver.quit()
+            except:
+                pass
         raise
 
 if __name__ == "__main__":
