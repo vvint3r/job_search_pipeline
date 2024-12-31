@@ -2,12 +2,57 @@
 
 ==Jobstyr is a tool that helps you find job listings and apply to them.==
 
-**PRELIMINARY SETUP**
+### LINKEDIN REFERENCES
 
+**Search Filtering Options (LinkedIn)**
+- **Job Title:**
+    - Exact Match (*Using Quotes*)
+- **Remote:**
+    - Remote
+    - On-site
+    - Hybrid
+- **Salary (Min):**
+    - $40,000
+    - $60,000
+    - $80,000
+    - $100,000
+    - $125,000
+    - $150,000
+    - $175,000
+    - $200,000
+- **Job Type:**
+    - Full-time
+    - Part-time
+    - Contract
+    - Internship
+- **Date Posted:** *(Feature Coming Soon)*
+    - Anytime
+    - Past week
+    - Past month
+    - Past 24 hours
+
+**Search Filtering Options (Jobstyr) Extended:** *(Feature Coming Soon)*
+...
+
+
+#### Job URL Samples (LinkedIn)
+- [**Search Input:** *"marketing" + "analytics"; Remote: Remote, Salary: $140,000+* = 1,598 results](https://www.linkedin.com/jobs/search/?currentJobId=4082014434&f_SB2=6&f_WT=2&geoId=103644278&keywords=marketing%20analytics&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true)
+
+- [**Search Input:** *"marketing analytics"; Remote: Remote, Salary: $140,000+* = 12 results](https://www.linkedin.com/jobs/search/?currentJobId=4082607486&f_SB2=6&f_WT=2&geoId=103644278&keywords=%22Marketing%22%20%2B%20%22Analytics%22&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R)
+
+- [**Search Input:** *"marketing" + "analytics"; Remote: Remote, Salary: $140,000+* = 21 results (Feature Coming Soon)](https://www.linkedin.com/jobs/search/?currentJobId=4082607486&f_SB2=6&f_WT=2&geoId=103644278&keywords=%22Marketing%22%20%2B%20%22Analytics%22&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R)
+
+
+## **PRELIMINARY SETUP**
+
+LINUX:
 - sudo apt update
 - sudo apt install python3-venv
 
 ---
+
+## **JOB PROCESSING, ANALYSIS, & RESUME OPTIMIZATION PIPELINE**
+===
 
 ### 1:
 ## **JOB SEARCH & EXTRACTION**
@@ -19,9 +64,6 @@ pip install -r requirements.txt
 ```
 
 1. Run `./xxx.sh` to run the job search pipeline.
-
-
-
 
 ---
 

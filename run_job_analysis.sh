@@ -10,7 +10,7 @@ date
 
 # Static job details
 JOB_TITLE="SEO Manager"
-JOB_FILE="/home/wynt3r/JobSearch/job_post_details/seo_manager/seo_manager_details_20241230_96122.csv"
+JOB_FILE="/home/wynt3r/JobSearch/job_search/job_post_details/seo_manager/seo_manager_details_20241230_26185.csv"
 
 # Verify input file exists
 if [ ! -f "$JOB_FILE" ]; then

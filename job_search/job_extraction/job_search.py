@@ -570,7 +570,7 @@ def main():
         saved_path = save_results(df, job_title, search_params, search_folder)
         
         # Log the job search parameters
-        log_filename = os.path.join("job_search_results", "jobs_ran.csv")
+        log_filename = os.path.join("job_search", "job_search_results", "jobs_ran.csv")
         job_run_data = {
             "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             "job_keyword": job_title,

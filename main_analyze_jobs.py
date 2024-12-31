@@ -4,7 +4,8 @@ import os
 import sys
 from datetime import datetime
 import argparse
-from job_text_analysis.unique_terms import generate_unique_terms_report
+from job_text_analysis.text_insights_models.key_terms.unique_terms import generate_unique_terms_report
+from job_text_analysis.text_insights_models.key_terms.term_consolidation import consolidate_terms
 
 # Configure logging
 logging.basicConfig(
@@ -18,9 +19,8 @@ def run_text_cleaning(job_title, input_file, python_interpreter):
     try:
         logging.info(f"Starting text cleaning for job title: {job_title}")
         
-        # Run the text cleaning script with input file
         cmd = [
-            python_interpreter,  # Use the specified Python interpreter
+            python_interpreter,
             './job_text_analysis/text_preproc/text_cleaning.py', 
             job_title,
             '--input-file',
@@ -50,7 +50,7 @@ def run_keyword_extraction(input_file, model_type, python_interpreter):
         logging.info(f"Starting keyword extraction for file: {input_file}")
         
         cmd = [
-            python_interpreter,  # Use the specified Python interpreter
+            python_interpreter,
             './job_text_analysis/text_insights_models/key_terms/keyword_extraction.py',
             input_file,
             '--model',
@@ -102,7 +102,13 @@ def main():
         
         # Step 3: Generate unique terms report
         nostop_file = args.input_file.replace('.csv', '_nostop.csv')
-        generate_unique_terms_report(nostop_file)
+        unq_terms_file = generate_unique_terms_report(nostop_file)
+        
+        # Step 4: Consolidate similar terms
+        if unq_terms_file and os.path.exists(unq_terms_file):
+            logging.info("Starting term consolidation...")
+            consolidated_file = consolidate_terms(unq_terms_file)
+            logging.info(f"Term consolidation completed. Results saved to: {consolidated_file}")
         
         logging.info("Job analysis pipeline completed successfully")
         
