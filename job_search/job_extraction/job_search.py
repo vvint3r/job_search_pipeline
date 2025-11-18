@@ -21,6 +21,7 @@ from utils import load_cookie_data
 from config import search_parameters
 import urllib3
 import uuid
+from job_metrics_tracker import JobMetricsTracker
 
 # Configure logging
 logging.basicConfig(
@@ -260,9 +261,16 @@ def generate_file_id():
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     return f"_{random_id}_{timestamp}"
 
+def generate_unique_id():
+    """Generate a unique ID using UUID4."""
+    return str(uuid.uuid4())
+
 def save_results(df, job_title, search_params, search_folder="job_search/job_search_results"):
     """Save job results with the correct naming convention."""
     try:
+        # Add unique IDs to each job record
+        df['job_id'] = [generate_unique_id() for _ in range(len(df))]
+        
         # Clean job title and ensure lowercase
         job_title_clean = job_title.lower().replace(' ', '_')
         
@@ -294,6 +302,10 @@ def save_results(df, job_title, search_params, search_folder="job_search/job_sea
         # Save both CSV and JSON versions
         csv_path = os.path.join(job_folder, f"{filename}.csv")
         json_path = os.path.join(job_folder, f"{filename}.json")
+        
+        # Reorder columns to have job_id first
+        cols = ['job_id'] + [col for col in df.columns if col != 'job_id']
+        df = df[cols]
         
         df.to_csv(csv_path, index=False)
         logging.info(f"Results saved to {csv_path}")
@@ -495,7 +507,7 @@ def extract_job_details(job, selectors=None):
             remote_status_element = job.find_element(By.XPATH, ".//*[contains(text(), 'Remote') or contains(text(), 'Onsite') or contains(text(), 'Hybrid')]")
             remote_status = remote_status_element.text.strip()
         except NoSuchElementException:
-            remote_status = "Onsite"
+            remote_status = "Not Specified"
 
         return {
             "company_title": company_name,
@@ -549,6 +561,9 @@ def main():
     job_title = args.job_title
     logging.info(f"Starting job search for: {job_title}")
 
+    # Initialize metrics tracker
+    metrics_tracker = JobMetricsTracker()
+
     # Get search parameters from user
     logging.info("Getting search parameters...")
     search_params = get_search_parameters()
@@ -569,20 +584,22 @@ def main():
         # Save results using the same search_folder
         saved_path = save_results(df, job_title, search_params, search_folder)
         
-        # Log the job search parameters
-        log_filename = os.path.join("job_search", "job_search_results", "jobs_ran.csv")
-        job_run_data = {
-            "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            "job_keyword": job_title,
-            **search_params,
-            "total_jobs_found": len(df)
-        }
+        # Save run metrics
+        metrics_tracker.save_run_metrics(
+            job_title=job_title,
+            total_jobs=len(df),
+            salary_range=search_params.get('salary_range', 'Not specified'),
+            job_type=search_params.get('job_type', 'Not specified'),
+            search_type=search_params.get('search_type', 'Not specified'),
+            geography=search_params.get('geography', 'Not specified')
+        )
         
-        if os.path.exists(log_filename):
-            pd.DataFrame([job_run_data]).to_csv(log_filename, mode='a', header=False, index=False)
-        else:
-            pd.DataFrame([job_run_data]).to_csv(log_filename, index=False)
-        logging.info(f"Job run logged to: {log_filename}")
+        # Update jobs aggregation
+        metrics_tracker.update_jobs_aggregation(
+            job_title=job_title,
+            new_jobs=df.to_dict('records')
+        )
+        
         return saved_path
     else:
         logging.warning("No results found or DataFrame is empty")

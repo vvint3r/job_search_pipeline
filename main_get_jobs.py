@@ -13,6 +13,20 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
+def ensure_jobs_ran_file_exists():
+    """Create jobs_ran.csv if it doesn't exist."""
+    log_dir = os.path.join("job_search", "job_search_results")
+    log_file = os.path.join(log_dir, "jobs_ran.csv")
+    
+    # Create directory if it doesn't exist
+    os.makedirs(log_dir, exist_ok=True)
+    
+    # Create file with headers if it doesn't exist
+    if not os.path.exists(log_file):
+        with open(log_file, 'w') as f:
+            f.write("timestamp,job_keyword,search_status\n")
+        logging.info(f"Created new jobs_ran.csv file at {log_file}")
+
 def find_latest_csv(job_title, search_folder="job_search/job_search_results"):
     """Find the latest CSV file for a given job title."""
     try:
@@ -38,10 +52,48 @@ def find_latest_csv(job_title, search_folder="job_search/job_search_results"):
         logging.error(f"Error finding latest CSV: {e}")
         raise
 
+def record_job_search(job_title, status="completed"):
+    """Record a job search in the jobs_ran.csv file."""
+    log_file = os.path.join("job_search", "job_search_results", "jobs_ran.csv")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(log_file, 'a') as f:
+        f.write(f"{timestamp},{job_title},{status}\n")
+    logging.info(f"Recorded job search for '{job_title}' with status '{status}'")
+
+
+def run_job_aggregation_pipeline(job_title):
+    """Run the job aggregation pipeline to dedupe and consolidate results."""
+    try:
+        logging.info("PIPELINE 4: Running the JOB AGGREGATION pipeline:")
+        cmd = ['python3', './job_search/job_extraction/job_aggregation.py', '--job_title', job_title]
+        logging.info(f"Running command: {' '.join(cmd)}")
+        
+        result = subprocess.run(
+            cmd,
+            stdin=None,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        
+        if result.returncode != 0:
+            logging.error(f"Pipeline 4 failed with output: {result.stdout}\nError: {result.stderr}")
+            raise subprocess.CalledProcessError(result.returncode, cmd)
+        else:
+            logging.info("Pipeline 4 completed successfully")
+            
+    except Exception as e:
+        logging.error(f"Error in Pipeline 4: {e}")
+        raise
+
+
 def run_job_search_pipeline():
     """Run the complete job search pipeline."""
     try:
         logging.info("Starting job search pipeline...")
+        
+        # Ensure jobs_ran.csv exists
+        ensure_jobs_ran_file_exists()
         
         # Prompt for job title if not provided
         job_title = input("Enter the job title to search for: ").strip()
@@ -58,7 +110,11 @@ def run_job_search_pipeline():
         )
         
         if result.returncode != 0:
+            record_job_search(job_title, "failed")
             raise subprocess.CalledProcessError(result.returncode, cmd)
+        
+        # Record successful search
+        record_job_search(job_title, "completed")
         
         # Get the job title that was used (from the latest run in jobs_ran.csv)
         log_file = os.path.join("job_search", "job_search_results", "jobs_ran.csv")
@@ -99,10 +155,31 @@ def run_job_search_pipeline():
                         else:
                             logging.info("Pipeline 2 completed successfully")
                             
+                            # PIPELINE 3: Merge job details
+                            logging.info("PIPELINE 3: Running the JOB DETAILS MERGE pipeline:")
+                            cmd = ['python3', './job_search/job_extraction/merge_job_details.py', '--job_title', job_title]
+                            logging.info(f"Running command: {' '.join(cmd)}")
+                            
+                            result = subprocess.run(
+                                cmd,
+                                stdin=None,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                text=True
+                            )
+                            
+                            if result.returncode != 0:
+                                logging.error(f"Pipeline 3 failed with output: {result.stdout}\nError: {result.stderr}")
+                                raise subprocess.CalledProcessError(result.returncode, cmd)
+                            else:
+                                logging.info("Pipeline 3 completed successfully")
+                                
+                                # Pipeline 3 already handles aggregation, so we're done
+                                logging.info("Job search pipeline completed successfully")
                     except FileNotFoundError as e:
                         logging.error(f"Could not find CSV file: {e}")
                     except Exception as e:
-                        logging.error(f"Error in Pipeline 2: {e}")
+                        logging.error(f"Error in Pipeline 2 or 3: {e}")
                 else:
                     logging.error("No job entries found in jobs_ran.csv")
         else:

@@ -1,4 +1,4 @@
-#!/home/wynt3r/JobSearch/venv/bin/python3.10
+#!/home/wynt3r/job_search_pipeline/venv/bin/python3
 # -*- coding: UTF-8 -*-
 from __future__ import print_function, division, absolute_import
 

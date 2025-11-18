@@ -1,4 +1,4 @@
-#!/home/wynt3r/JobSearch/venv/bin/python3.10
+#!/home/wynt3r/job_search_pipeline/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

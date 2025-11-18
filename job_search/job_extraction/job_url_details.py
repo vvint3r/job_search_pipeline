@@ -8,7 +8,6 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import argparse
-import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,8 +18,10 @@ from datetime import datetime
 import subprocess
 from utils import load_cookie_data
 from pyvirtualdisplay import Display
-
-
+from job_metrics_tracker import JobMetricsTracker
+import uuid
+import shutil
+from driver_utils import create_driver, cleanup_driver
 
 # Set up logging
 logging.basicConfig(
@@ -39,35 +40,6 @@ def get_chrome_version():
         return version.decode().strip().split()[-1]
     except:
         return None
-
-def setup_driver():
-    """Initialize and return Chrome driver in headless mode."""
-    try:
-        logging.info("Starting Chrome driver setup...")
-        
-        options = uc.ChromeOptions()
-        options.add_argument('--no-sandbox')
-        options.add_argument('--headless=new')  # New headless mode
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--window-size=1920,1080')
-        options.add_argument('--disable-blink-features=AutomationControlled')
-        
-        logging.info("Getting Chrome version...")
-        chrome_version = get_chrome_version()
-        logging.info(f"Chrome version detected: {chrome_version}")
-        
-        driver = uc.Chrome(
-            options=options,
-            version_main=int(chrome_version.split('.')[0]) if chrome_version else None,
-            use_subprocess=True
-        )
-        
-        return driver
-        
-    except Exception as e:
-        logging.error(f"Error in setup_driver: {str(e)}")
-        raise
 
 def parse_cookies(raw_cookie_data):
     try:
@@ -98,142 +70,160 @@ def load_cookies(driver, cookies):
 
 
 def get_job_details(driver, url):
-    random_delay(2, 3)
+    """Get details for a single job posting."""
+    max_retries = 2  # Reduced retries since we're using batch processing
+    retry_count = 0
     
-    try:
-        driver.get(url)
-        wait = WebDriverWait(driver, 25)
-        
-        job_title = company_name = job_description = date_posted = location = salary = remote_status = None
-        
-        time.sleep(random.uniform(5, 10))
-        
-        # Expand job description if available
+    while retry_count < max_retries:
         try:
-            show_more_button = wait.until(EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, '.feed-shared-inline-show-more-text__see-more-less-toggle')))
-            ActionChains(driver).move_to_element(show_more_button).click().perform()
-            time.sleep(2)
-        except Exception as e:
-            print(f"Show more button not found or could not be clicked: {e}")
-            time.sleep(2)  # Retry after a brief wait
+            logging.info(f"Processing URL: {url}")
+            
+            # Initial page load with delay
+            driver.get(url)
+            time.sleep(random.uniform(3, 5))
+            
+            wait = WebDriverWait(driver, 15)
+            
+            # Initialize variables
+            job_title = company_name = job_description = date_posted = location = salary = remote_status = days_since_posted = None
+            
+            # Extract job details with minimal delays
             try:
                 show_more_button = wait.until(EC.element_to_be_clickable(
                     (By.CSS_SELECTOR, '.feed-shared-inline-show-more-text__see-more-less-toggle')))
-                ActionChains(driver).move_to_element(show_more_button).click().perform()
-                time.sleep(2)
+                driver.execute_script("arguments[0].click();", show_more_button)
             except Exception as e:
-                print(f"Retry failed to click show more button: {e}")
-
-        # Extract job title
-        try:
-            job_title_element = driver.find_element(By.CSS_SELECTOR, 'h1')
-            job_title = job_title_element.text.strip()
-        except Exception as e:
-            print(f"Job title not found: {e}")
-            job_title = "-"
-        
-        # Extract job description
-        try:
-            # Updated CSS selector to match the HTML provided
-            job_description_element = driver.find_element(By.CSS_SELECTOR, 'div.job-details-about-the-job-module__description div.feed-shared-inline-show-more-text')
+                logging.warning(f"Show more button not found: {e}")
             
-            # Replace dashes with spaces
-            job_description = job_description_element.text.replace("-", " ").strip()
+            # Extract all fields with appropriate waits
+            job_title = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'h1'))).text.strip()
             
-            # Replace multiple spaces with a single space
-            job_description = re.sub(r'\s+', ' ', job_description)
-            
-            # Remove non-alphanumeric characters
-            # job_description = re.sub(r'[^\w\s]', '', job_description)
-        except Exception as e:
-            print(f"Job description not found: {e}")
-            job_description = "-"
-
-        # Extract company name
-        try:
-            company_name_element = driver.find_element(
-                By.CSS_SELECTOR, 'div.job-details-jobs-unified-top-card__company-name a')
-            company_name = company_name_element.text.strip()
-        except Exception as e:
-            print(f"Company name not found: {e}")
-            company_name = "-"
-
-        # Extract date posted
-        try:
-            # Wait for either of the possible date elements to load
             try:
-                date_posted_element = WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, 'span.tvm__text.tvm__text--positive'))
-                )
+                job_description_element = wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'div.job-details-about-the-job-module__description div.feed-shared-inline-show-more-text')))
+                job_description = job_description_element.text.replace("-", " ").strip()
+                job_description = re.sub(r'\s+', ' ', job_description)
             except:
-                date_posted_element = WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, 'span.tvm__text.tvm__text--low-emphasis'))
-                )
-            
-            # Extract and clean the date text
-            date_posted_text = date_posted_element.text.strip()
-            
-            # Calculate the date posted
-            today = pd.Timestamp('today')
-            if 'hour' in date_posted_text:
-                hours_ago = int(re.search(r'(\d+)\s*hour', date_posted_text).group(1))
-                date_posted = today - pd.Timedelta(hours=hours_ago)
-            elif 'day' in date_posted_text:
-                days_ago = int(re.search(r'(\d+)\s*day', date_posted_text).group(1))
-                date_posted = today - pd.Timedelta(days=days_ago)
-            elif 'week' in date_posted_text:
-                weeks_ago = int(re.search(r'(\d+)\s*week', date_posted_text).group(1))
-                date_posted = today - pd.Timedelta(weeks=weeks_ago)
-            elif 'month' in date_posted_text:
-                months_ago = int(re.search(r'(\d+)\s*month', date_posted_text).group(1))
-                date_posted = today - pd.DateOffset(months=months_ago)
-            else:
+                job_description = "-"
+                
+            try:
+                company_name = wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'div.job-details-jobs-unified-top-card__company-name a'))).text.strip()
+            except:
+                company_name = "-"
+                
+            try:
+                # Target the tertiary description container where date info is located
+                tertiary_container = wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'div.job-details-jobs-unified-top-card__tertiary-description-container')))
+                
+                # Find spans that contain "Reposted" or "Posted" followed by time information
+                date_text = None
+                spans = tertiary_container.find_elements(By.CSS_SELECTOR, 'span.tvm__text.tvm__text--low-emphasis')
+                
+                for span in spans:
+                    span_text = span.text.strip()
+                    # Check if this span contains date-related keywords
+                    if 'Reposted' in span_text or 'Posted' in span_text:
+                        # Get the full text including nested spans
+                        date_text = span_text
+                        break
+                
+                if date_text:
+                    date_posted = parse_date_posted(date_text)
+                    # Calculate days since posted
+                    days_since_posted = calculate_days_since_posted(date_posted)
+                else:
+                    date_posted = None
+                    days_since_posted = None
+            except Exception as e:
+                logging.warning(f"Could not extract date posted: {e}")
                 date_posted = None
-        except Exception as e:
-            print(f"Date posted not found or could not be parsed...")
-            date_posted = None
+                days_since_posted = None
+                
+            try:
+                location = wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'div.job-details-jobs-unified-top-card__primary-description-container span.tvm__text'))).text.strip()
+            except:
+                location = "-"
+                
+            try:
+                salary = wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "div.job-details-preferences-and-skills__pill span.ui-label.text-body-small"))).text.strip()
+            except:
+                salary = "-"
+                
+            try:
+                # Look for the job-details-fit-level-preferences container first
+                preferences_container = wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "div.job-details-fit-level-preferences")))
+                
+                # Find buttons within the container that contain location type text
+                buttons = preferences_container.find_elements(By.TAG_NAME, "button")
+                remote_status = "Onsite"  # Default fallback
+                
+                for button in buttons:
+                    button_text = button.text.strip()
+                    # Check if button contains location type keywords
+                    if any(keyword in button_text for keyword in ["Remote", "Hybrid", "Onsite"]):
+                        # Extract just the location type (may have other text like "Full-time")
+                        if "Remote" in button_text:
+                            remote_status = "Remote"
+                            break
+                        elif "Hybrid" in button_text:
+                            remote_status = "Hybrid"
+                            break
+                        elif "Onsite" in button_text:
+                            remote_status = "Onsite"
+                            break
+                
+            except Exception as e:
+                logging.warning(f"Could not extract remote status: {e}")
+                remote_status = "Onsite"
             
-        # Extract location
-        try:
-            # Wait for the primary description container
-            primary_description_container = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'div.job-details-jobs-unified-top-card__primary-description-container'))
-            )
-            # Locate the first span element with the expected class
-            location_element = primary_description_container.find_element(
-                By.XPATH, './/span[contains(@class, "tvm__text")]'
-            )
-            location = location_element.text.strip()
-        except Exception as e:
-            print(f"Location not found...")
-            location = "-"
+            return job_title, company_name, job_description, date_posted, location, remote_status, salary, url, days_since_posted
             
-        # Extract salary
-        try:
-            # Wait for the salary element to be present
-            salary_element = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "div.job-details-preferences-and-skills__pill span.ui-label.text-body-small"))
-            )
-            salary = salary_element.text.strip()
         except Exception as e:
-            print(f"Salary not found: {e}")
-            salary = "-"
+            retry_count += 1
+            logging.warning(f"Attempt {retry_count} failed for URL {url}: {e}")
+            if retry_count < max_retries:
+                time.sleep(random.uniform(5, 8))
+            else:
+                logging.error(f"Failed to retrieve details after {max_retries} attempts")
+                return "-", "-", "-", None, "-", "Onsite", "-", url, None
 
-        try:
-            # Wait for the remote status element
-            remote_status_element = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'Remote') or contains(text(), 'Onsite') or contains(text(), 'Hybrid')]"))
-            )
-            remote_status = remote_status_element.text.strip()
-        except Exception as e:
-            print(f"Remote status not found, assuming Onsite")
-            remote_status = 'Onsite'
-
-        return job_title, company_name, job_description, date_posted, location, remote_status, salary, url
+def parse_date_posted(date_text):
+    """Parse the date posted text into a timestamp."""
+    try:
+        today = pd.Timestamp('today')
+        if 'hour' in date_text:
+            hours = int(re.search(r'(\d+)\s*hour', date_text).group(1))
+            return today - pd.Timedelta(hours=hours)
+        elif 'day' in date_text:
+            days = int(re.search(r'(\d+)\s*day', date_text).group(1))
+            return today - pd.Timedelta(days=days)
+        elif 'week' in date_text:
+            weeks = int(re.search(r'(\d+)\s*week', date_text).group(1))
+            return today - pd.Timedelta(weeks=weeks)
+        elif 'month' in date_text:
+            months = int(re.search(r'(\d+)\s*month', date_text).group(1))
+            return today - pd.DateOffset(months=months)
     except Exception as e:
-        print(f"Failed to retrieve details from {url}: {e}")
-        return "-", "-", "-", "-", "-", "Onsite", "-", url
+        logging.warning(f"Could not parse date: {date_text} - {e}")
+        return None
+
+def calculate_days_since_posted(date_posted):
+    """Calculate the number of days between the extraction date and the posting date."""
+    if date_posted is None:
+        return None
+    try:
+        today = pd.Timestamp('today').normalize()
+        posted_date = pd.Timestamp(date_posted).normalize()
+        days_diff = (today - posted_date).days
+        return days_diff
+    except Exception as e:
+        logging.warning(f"Could not calculate days since posted: {e}")
+        return None
 
 def load_job_links(filename):
     """Load job links from the CSV file."""
@@ -253,14 +243,21 @@ def load_job_links(filename):
         logging.error(f"Error loading job links: {e}")
         return pd.DataFrame(), []  # Return empty DataFrame and list on error
 
+def generate_unique_id():
+    """Generate a unique ID using UUID4."""
+    return str(uuid.uuid4())
+
 def save_job_details(df, job_title):
     """Save job details with updated directory and formatting."""
     try:
+        # Add unique IDs to each job record
+        df['job_id'] = [generate_unique_id() for _ in range(len(df))]
+        
         # Clean job title for directory name
         job_title_clean = job_title.lower().replace(' ', '_')
         
-        # Create base folder structure
-        folder_store = f"./job_search/job_post_details/{job_title_clean}"
+        # Create base folder structure with job_details subdirectory
+        folder_store = f"./job_search/job_post_details/{job_title_clean}/job_details"
         os.makedirs(folder_store, exist_ok=True)
         
         # Generate filename with date
@@ -271,6 +268,10 @@ def save_job_details(df, job_title):
         
         # Construct the filename (all lowercase) without company name
         base_filename = f"{job_title_clean}_details_{current_date}_{random_number}"
+        
+        # Reorder columns to have job_id first
+        cols = ['job_id'] + [col for col in df.columns if col != 'job_id']
+        df = df[cols]
         
         # Save both CSV and JSON versions
         csv_path = os.path.join(folder_store, f"{base_filename}.csv")
@@ -310,32 +311,85 @@ def save_job_details(df, job_title):
         logging.error(f"Error saving job details: {e}")
         raise
 
-def process_job_links(driver, links, job_title):
-    """Process job links with updated column structure."""
-    results = []
-    for url in links:
+def process_job_links(links, output_dir, job_title):
+    """Process job links in batches with appropriate delays."""
+    try:
+        # Initialize driver once
+        driver = create_driver()
+        load_cookies(driver, load_cookie_data())
+        
+        # Process in small batches
+        batch_size = 3
+        results = []
+        
+        for i in range(0, len(links), batch_size):
+            batch = links[i:i + batch_size]
+            logging.info(f"Processing batch {i//batch_size + 1} of {(len(links) + batch_size - 1)//batch_size}")
+            
+            # Process each URL in the batch
+            for url in batch:
+                try:
+                    job_details = get_job_details(driver, url)
+                    if job_details:
+                        results.append(job_details)
+                except Exception as e:
+                    logging.error(f"Error processing URL {url}: {e}")
+                    continue
+                
+                # Add delay between jobs within batch (5-10 seconds)
+                time.sleep(random.uniform(5, 10))
+            
+            # Add longer delay between batches (20-30 seconds)
+            if i + batch_size < len(links):
+                delay = random.uniform(20, 30)
+                logging.info(f"Taking a break between batches ({delay:.1f} seconds)...")
+                time.sleep(delay)
+        
+        # Create results DataFrame
+        df_results = pd.DataFrame(results, columns=[
+            'job_title', 'company', 'description', 'date_posted',
+            'location', 'remote', 'salary', 'job_url', 'days_since_posted'
+        ])
+        
+        # Save results in job_details directory
+        job_title_clean = job_title.lower().replace(' ', '_')
+        folder_store = f"./job_search/job_post_details/{job_title_clean}/job_details"
+        os.makedirs(folder_store, exist_ok=True)
+        
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        output_filename = f"{job_title_clean}_job_details_{timestamp}.csv"
+        output_path = os.path.join(folder_store, output_filename)
+        
+        # Save both CSV and JSON
+        df_results.to_csv(output_path, index=False)
+        logging.info(f"Results saved to {output_path}")
+        
+        # Save JSON version
+        json_path = output_path.replace('.csv', '.json')
+        output_data = {
+            "metadata": {
+                "job_title": job_title_clean,
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "total_jobs": len(df_results)
+            },
+            "jobs": df_results.to_dict('records')
+        }
+        
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(output_data, f, indent=2, ensure_ascii=False)
+        logging.info(f"Results saved to {json_path}")
+        
+        return df_results
+        
+    except Exception as e:
+        logging.error(f"Error in process_job_links: {e}")
+        return pd.DataFrame()
+    finally:
         try:
-            logging.info(f"Processing URL: {url[:50]}")
-            job_details = get_job_details(driver, url)
-            if job_details[0] != "-":  # Only add if we got valid details
-                results.append(job_details)
-        except Exception as e:
-            logging.error(f"Error processing URL {url[:50]}: {e}")
-            continue
-    
-    if not results:
-        logging.warning("No valid job details were collected")
-        return
-    
-    # Create DataFrame with updated columns including URL
-    df = pd.DataFrame(results, columns=[
-        'job_title', 'company', 'description', 'date_posted', 
-        'location', 'remote', 'salary', 'job_url'
-    ])
-    
-    # Clean job title for saving
-    job_title_clean = job_title.lower().replace(' ', '_')
-    save_job_details(df, job_title_clean)
+            cleanup_driver(driver)
+        except:
+            pass
 
 def main(job_title, input_filename):
     """Main function with cleaned job title."""
@@ -343,6 +397,9 @@ def main(job_title, input_filename):
     try:
         # Clean job title
         job_title_clean = job_title.lower().replace(' ', '_')
+        
+        # Initialize metrics tracker
+        metrics_tracker = JobMetricsTracker()
         
         # Load job links from input file
         logging.info(f"Loading job links from {input_filename}")
@@ -353,7 +410,7 @@ def main(job_title, input_filename):
 
         # Initialize driver
         logging.info("Initializing Chrome driver...")
-        driver = setup_driver()
+        driver = create_driver()
         
         try:
             # Load cookies
@@ -364,20 +421,74 @@ def main(job_title, input_filename):
             else:
                 logging.warning("No cookies loaded")
             
-            # Process job links with cleaned job title
+            # Process job links and collect detailed information
             logging.info("Starting to process job links...")
-            process_job_links(driver, links, job_title_clean)
+            detailed_jobs = []
+            for link in links:
+                job_details = get_job_details(driver, link)
+                if job_details:
+                    # Convert tuple to dictionary
+                    job_dict = {
+                        'job_title': job_details[0],
+                        'company': job_details[1],
+                        'description': job_details[2],
+                        'date_posted': job_details[3],
+                        'location': job_details[4],
+                        'remote': job_details[5],
+                        'salary': job_details[6],
+                        'job_url': job_details[7],
+                        'days_since_posted': job_details[8]
+                    }
+                    detailed_jobs.append(job_dict)
+            
+            # Create DataFrame from detailed jobs
+            if detailed_jobs:
+                df_results = pd.DataFrame(detailed_jobs)
+                
+                # Save to job details directory
+                folder_store = f"./job_search/job_post_details/{job_title_clean}/job_details"
+                os.makedirs(folder_store, exist_ok=True)
+                
+                # Generate filename with timestamp
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                output_filename = f"{job_title_clean}_job_details_{timestamp}.csv"
+                output_path = os.path.join(folder_store, output_filename)
+                
+                # Save CSV
+                df_results.to_csv(output_path, index=False)
+                logging.info(f"Results saved to {output_path}")
+                
+                # Save JSON version
+                json_path = output_path.replace('.csv', '.json')
+                output_data = {
+                    "metadata": {
+                        "job_title": job_title_clean,
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "total_jobs": len(df_results)
+                    },
+                    "jobs": df_results.to_dict('records')
+                }
+                
+                with open(json_path, 'w', encoding='utf-8') as f:
+                    json.dump(output_data, f, indent=2, ensure_ascii=False)
+                logging.info(f"Results saved to {json_path}")
+                
+                # Update metrics
+                metrics_tracker.update_jobs_aggregation(
+                    job_title=job_title,
+                    new_jobs=detailed_jobs
+                )
             
         finally:
             if driver:
                 logging.info("Closing Chrome driver...")
-                driver.quit()
+                cleanup_driver(driver)
                 
     except Exception as e:
         logging.error(f"Error in main processing: {str(e)}")
         if driver:
             try:
-                driver.quit()
+                cleanup_driver(driver)
             except:
                 pass
         raise

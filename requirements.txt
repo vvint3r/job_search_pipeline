@@ -32,6 +32,7 @@ idna==3.10
 iniconfig==2.0.0
 Jinja2==3.1.4
 joblib==1.4.2
+keybert==0.7.0
 kiwisolver==1.4.7
 langcodes==3.5.0
 language_data==1.3.0
@@ -60,6 +61,7 @@ nvidia-cusparse-cu12==12.3.1.170
 nvidia-nccl-cu12==2.21.5
 nvidia-nvjitlink-cu12==12.4.127
 nvidia-nvtx-cu12==12.4.127
+openai==1.12.0
 outcome==1.3.0.post0
 packaging==24.2
 pandas==2.2.3
@@ -96,10 +98,12 @@ requests==2.32.3
 rich==13.9.4
 safetensors==0.4.5
 sbvirtualdisplay==1.4.0
+pyvirtualdisplay==3.0
 scikit-learn==1.6.0
 scipy==1.13.1
 selenium==4.27.1
 seleniumbase==4.33.11
+sentence-transformers==2.5.1
 shellingham==1.5.4
 six==1.17.0
 smart-open==7.1.0
@@ -140,3 +144,4 @@ websockets==14.1
 wordcloud==1.9.4
 wrapt==1.17.0
 wsproto==1.2.0
+yake==0.4.8
