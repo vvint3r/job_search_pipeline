@@ -75,6 +75,14 @@ class GenericFormFiller(BaseFormFiller):
             # Fill dropdowns
             self._fill_all_dropdowns(app_info)
             
+            # Fill work experience section (uses resume components from base class)
+            work_exp_filled = self.fill_work_experience_section(max_entries=3)
+            self.logger.info(f"Filled {work_exp_filled} work experience entries")
+            
+            # Fill education section (uses resume components from base class)
+            edu_filled = self.fill_education_section(max_entries=2)
+            self.logger.info(f"Filled {edu_filled} education entries")
+            
             # Upload files
             resume_path = app_info.get('resume_path')
             if resume_path:

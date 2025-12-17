@@ -37,11 +37,10 @@ def read_urls_from_file(filename):
 def process_urls(urls):
     """Process URLs and collect job details."""
     driver = None
-    temp_dir = None
     try:
         # Initialize driver with random port and unique profile
         logging.info("Initializing Chrome driver...")
-        driver, temp_dir = create_driver(profile_name="linkedin_urls_processor")
+        driver = create_driver(profile_name="linkedin_urls_processor")
         
         # Load cookies
         logging.info("Loading cookies...")
@@ -69,7 +68,9 @@ def process_urls(urls):
                         'location': job_details[4],
                         'remote': job_details[5],
                         'salary': job_details[6],
-                        'job_url': job_details[7]
+                        'job_url': job_details[7],
+                        'days_since_posted': job_details[8],
+                        'application_url': job_details[9]
                     }
                     detailed_jobs.append(job_dict)
                     logging.info(f"Successfully processed URL {idx}")
@@ -83,7 +84,7 @@ def process_urls(urls):
         logging.error(f"Error in process_urls: {e}")
         return []
     finally:
-        cleanup_driver(driver, temp_dir)
+        cleanup_driver(driver)
 
 def save_results(jobs, output_file):
     """Save job details to CSV file."""

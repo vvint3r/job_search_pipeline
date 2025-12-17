@@ -16,7 +16,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from job_search.auto_application.config import load_config, validate_config
 from job_search.auto_application.job_board_detector import detect_job_board, get_job_board_info
 from job_search.auto_application.application_tracker import ApplicationTracker
-from job_search.auto_application.form_fillers import GreenhouseFormFiller, GenericFormFiller
+from job_search.auto_application.form_fillers import GreenhouseFormFiller, WorkdayFormFiller, GenericFormFiller
 from job_search.job_extraction.driver_utils import create_driver, cleanup_driver
 
 # Configure logging
@@ -40,6 +40,7 @@ def get_form_filler(job_board_type, driver, config):
     """
     fillers = {
         'greenhouse': GreenhouseFormFiller,
+        'workday': WorkdayFormFiller,
         'generic': GenericFormFiller
     }
     
@@ -60,23 +61,29 @@ def process_job_application(job_row, driver, config, tracker, auto_submit=False)
     Returns:
         dict: Result of the application attempt
     """
+    # Prefer application_url over job_url, fallback to job_url if application_url not available
+    application_url = job_row.get('application_url', '')
     job_url = job_row.get('job_url', '')
     job_id = job_row.get('job_id', '')
     
-    if not job_url:
-        logging.warning("No job URL found in job row")
-        return {'success': False, 'message': 'No job URL', 'submitted': False}
+    # Determine which URL to use for application
+    url_to_use = application_url if application_url and application_url != 'Not Available' and application_url != '' else job_url
     
-    # Check if already applied
-    if tracker.is_already_applied(job_url, job_id):
+    if not url_to_use:
+        logging.warning("No application URL or job URL found in job row")
+        return {'success': False, 'message': 'No URL found', 'submitted': False}
+    
+    # Check if already applied (use both URLs for tracking)
+    if tracker.is_already_applied(url_to_use, job_id) or tracker.is_already_applied(job_url, job_id):
         logging.info(f"Already applied to: {job_row.get('job_title', 'Unknown')} at {job_row.get('company', 'Unknown')}")
         return {'success': True, 'message': 'Already applied', 'submitted': False}
     
-    # Detect job board type
-    job_board_type = detect_job_board(job_url)
-    job_board_info = get_job_board_info(job_url)
+    # Detect job board type from the URL we'll use
+    job_board_type = detect_job_board(url_to_use)
+    job_board_info = get_job_board_info(url_to_use)
     
     logging.info(f"Processing application for: {job_row.get('job_title', 'Unknown')} at {job_row.get('company', 'Unknown')}")
+    logging.info(f"Using URL: {url_to_use}")
     logging.info(f"Job board type: {job_board_type}")
     
     # Get appropriate form filler
@@ -87,14 +94,15 @@ def process_job_application(job_row, driver, config, tracker, auto_submit=False)
         job_data = {
             'job_id': job_id,
             'job_title': job_row.get('job_title', ''),
-            'company': job_row.get('company', ''),
+            'company': job_row.get('company', '') or job_row.get('company_title', ''),
             'job_url': job_url,
+            'application_url': application_url,
             'location': job_row.get('location', ''),
-            'description': job_row.get('job_description', '')
+            'description': job_row.get('description', '') or job_row.get('job_description', '')
         }
         
-        # Fill the application
-        result = form_filler.fill_application(job_url, job_data)
+        # Fill the application using the appropriate URL
+        result = form_filler.fill_application(url_to_use, job_data)
         
         # Auto-submit if requested (use with caution!)
         if auto_submit and result.get('success') and not result.get('submitted'):
@@ -143,8 +151,17 @@ def load_jobs_from_csv(csv_path, limit=None, filter_applied=True):
         df = pd.read_csv(csv_path)
         logging.info(f"Loaded {len(df)} jobs from {csv_path}")
         
-        # Filter out jobs without URLs
-        df = df[df['job_url'].notna() & (df['job_url'] != '')]
+        # Filter out jobs without URLs (check both job_url and application_url)
+        # Keep jobs that have either job_url or application_url
+        has_job_url = df['job_url'].notna() & (df['job_url'] != '')
+        
+        # Check if application_url column exists
+        if 'application_url' in df.columns:
+            has_application_url = df['application_url'].notna() & (df['application_url'] != '') & (df['application_url'] != 'Not Available')
+            df = df[has_job_url | has_application_url]
+        else:
+            df = df[has_job_url]
+        
         logging.info(f"After filtering for URLs: {len(df)} jobs")
         
         # Limit number of jobs if specified

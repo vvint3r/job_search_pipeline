@@ -346,6 +346,33 @@ def aggregate_jobs_with_deduplication(job_title, new_jobs_df=None):
                 existing_urls = set(master_df['job_url'].tolist())
                 new_jobs_filtered = new_jobs_df[~new_jobs_df['job_url'].isin(existing_urls)]
                 
+                # Update existing jobs with new application_url and days_since_posted values
+                update_columns = ['application_url', 'days_since_posted']
+                jobs_updated = 0
+                for col in update_columns:
+                    if col in new_jobs_df.columns:
+                        # Create a mapping from job_url to the new column value
+                        url_to_value = dict(zip(new_jobs_df['job_url'], new_jobs_df[col]))
+                        
+                        # Ensure the column exists in master_df
+                        if col not in master_df.columns:
+                            master_df[col] = None
+                        
+                        # Update rows where we have new data and old data is missing/empty
+                        for url, new_value in url_to_value.items():
+                            if new_value and str(new_value).strip() and str(new_value) != 'nan':
+                                mask = (master_df['job_url'] == url) & (
+                                    master_df[col].isna() | 
+                                    (master_df[col].astype(str).str.strip() == '') |
+                                    (master_df[col].astype(str) == 'nan')
+                                )
+                                if mask.any():
+                                    master_df.loc[mask, col] = new_value
+                                    jobs_updated += 1
+                
+                if jobs_updated > 0:
+                    logging.info(f"Updated {jobs_updated} existing jobs with new application_url/days_since_posted data")
+                
                 if not new_jobs_filtered.empty:
                     # Append new jobs to master
                     master_df = pd.concat([master_df, new_jobs_filtered], ignore_index=True)
@@ -387,6 +414,23 @@ def aggregate_jobs_with_deduplication(job_title, new_jobs_df=None):
                         existing_urls = set(master_df['job_url'].tolist())
                         new_from_file = df[~df['job_url'].isin(existing_urls)]
                         
+                        # Update existing jobs with new application_url and days_since_posted values
+                        update_columns = ['application_url', 'days_since_posted']
+                        for col in update_columns:
+                            if col in df.columns:
+                                url_to_value = dict(zip(df['job_url'], df[col]))
+                                if col not in master_df.columns:
+                                    master_df[col] = None
+                                for url, new_value in url_to_value.items():
+                                    if new_value and str(new_value).strip() and str(new_value) != 'nan':
+                                        mask = (master_df['job_url'] == url) & (
+                                            master_df[col].isna() | 
+                                            (master_df[col].astype(str).str.strip() == '') |
+                                            (master_df[col].astype(str) == 'nan')
+                                        )
+                                        if mask.any():
+                                            master_df.loc[mask, col] = new_value
+                        
                         if not new_from_file.empty:
                             master_df = pd.concat([master_df, new_from_file], ignore_index=True)
                             logging.info(f"Added {len(new_from_file)} jobs from {os.path.basename(file)}")
@@ -409,6 +453,13 @@ def aggregate_jobs_with_deduplication(job_title, new_jobs_df=None):
             
             # NEW: Additional deduplication based on company + job title
             master_df = deduplicate_by_company_and_title(master_df, keep_strategy='latest')
+            
+            # Ensure required columns exist (add if missing)
+            required_columns = ['application_url', 'days_since_posted']
+            for col in required_columns:
+                if col not in master_df.columns:
+                    master_df[col] = None
+                    logging.info(f"Added missing column '{col}' to aggregated file")
             
             # Sort by date_extracted (most recent first)
             master_df = master_df.sort_values('date_extracted', ascending=False)

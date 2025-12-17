@@ -87,6 +87,16 @@ class GreenhouseFormFiller(BaseFormFiller):
             # Fill basic information
             self._fill_basic_info(personal_info)
             self._fill_application_details(app_info)
+            
+            # Fill work experience section (uses resume components)
+            work_exp_filled = self.fill_work_experience_section(max_entries=3)
+            self.logger.info(f"Filled {work_exp_filled} work experience entries")
+            
+            # Fill education section (uses resume components)
+            edu_filled = self.fill_education_section(max_entries=2)
+            self.logger.info(f"Filled {edu_filled} education entries")
+            
+            # Handle custom questions
             self._handle_custom_questions(job_data)
             
             # Upload resume

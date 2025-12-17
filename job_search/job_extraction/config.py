@@ -1,5 +1,5 @@
 search_parameters = {
-    "salary_ranges": [140000, 120000, 100000, 80000, 60000],
+    "salary_ranges": [180000,160000,140000, 120000, 100000, 80000, 60000],
     "job_types": ["full_time", "part_time", "contract", "temporary", "internship"],
     "search_types": ["exact", "broad"],
     "work_geo_options": {

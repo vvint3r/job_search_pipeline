@@ -2,12 +2,15 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import argparse
-from seleniumbase import Driver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
+from selenium.common.exceptions import (
+    StaleElementReferenceException,
+    NoSuchElementException,
+    TimeoutException,
+)
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import pandas as pd
@@ -19,6 +22,7 @@ import json
 import logging
 from utils import load_cookie_data
 from config import search_parameters
+from driver_utils import create_driver, cleanup_driver
 import urllib3
 import uuid
 from job_metrics_tracker import JobMetricsTracker
@@ -51,6 +55,7 @@ def load_cookies(driver, cookies):
             return
 
         logging.info("Loading cookies...")
+        driver.delete_all_cookies()
         cookies_loaded = 0
         
         for cookie in cookies:
@@ -108,6 +113,46 @@ def save_page_html(driver, file_name="page_source.html"):
         logging.error(f"Error saving page HTML: {e}")
 
 
+def capture_debug_artifacts(driver, prefix="linkedin_search"):
+    """Save HTML and screenshot for debugging when scraping fails."""
+    try:
+        debug_dir = "debug_snapshots"
+        os.makedirs(debug_dir, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        html_path = os.path.join(debug_dir, f"{prefix}_{timestamp}.html")
+        screenshot_path = os.path.join(debug_dir, f"{prefix}_{timestamp}.png")
+
+        save_page_html(driver, file_name=html_path)
+        driver.save_screenshot(screenshot_path)
+        logging.info(
+            f"Saved debug artifacts: HTML -> {html_path}, Screenshot -> {screenshot_path}"
+        )
+    except Exception as e:
+        logging.error(f"Failed to capture debug artifacts: {e}")
+
+
+def locate_jobs_container(driver, timeout=15):
+    """Locate the jobs list container using multiple fallback selectors."""
+    selectors = [
+        "div.jobs-search-two-pane__results-container ul.jobs-search__results-list",
+        "ul.jobs-search__results-list",
+        "div[class*='scaffold-layout__list']",
+    ]
+
+    for selector in selectors:
+        try:
+            logging.debug(f"Trying jobs container selector: {selector}")
+            return WebDriverWait(driver, timeout).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, selector))
+            )
+        except TimeoutException:
+            logging.debug(f"Selector did not match: {selector}")
+            continue
+
+    raise TimeoutException("Could not locate jobs results container with known selectors")
+
+
 def scrape_job_data(driver, url, max_pages=3):
     """Scrapes job data from LinkedIn."""
     jobs = []
@@ -120,10 +165,13 @@ def scrape_job_data(driver, url, max_pages=3):
         while page <= max_pages:
             logging.info(f"Scraping page {page}")
             
-            # Updated selector to handle dynamic class name
-            jobs_container = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "div[class*='scaffold-layout__list']"))
-            )
+            try:
+                jobs_container = locate_jobs_container(driver, timeout=15)
+            except TimeoutException as e:
+                logging.error(f"Unable to locate jobs container on page {page}: {e}")
+                logging.error(f"Current URL: {driver.current_url}")
+                capture_debug_artifacts(driver, prefix=f"jobs_list_page{page}")
+                break
             
             # Scroll through the jobs list
             for i in range(5):  # Scroll in chunks
@@ -133,6 +181,10 @@ def scrape_job_data(driver, url, max_pages=3):
             # Get job cards
             job_cards = jobs_container.find_elements(By.CSS_SELECTOR, "li.scaffold-layout__list-item")
             logging.info(f"Found {len(job_cards)} job cards on page {page}")
+            
+            if len(job_cards) == 0:
+                logging.warning(f"No job cards detected on page {page}. Saving debug snapshot.")
+                capture_debug_artifacts(driver, prefix=f"jobs_list_page{page}_empty")
             
             for job in job_cards:
                 try:
@@ -162,6 +214,8 @@ def scrape_job_data(driver, url, max_pages=3):
         
     except Exception as e:
         logging.error(f"Error in scrape_job_data: {e}")
+        logging.error(f"Current URL during failure: {driver.current_url}")
+        capture_debug_artifacts(driver, prefix="scrape_error")
         return jobs
 
 def get_search_parameters():
@@ -346,6 +400,8 @@ def perform_linkedin_search(job_title, search_params):
         logging.info("Navigating to LinkedIn main page...")
         driver.get("https://www.linkedin.com")
         time.sleep(5)
+        logging.info(f"Current URL before cookies: {driver.current_url}")
+        capture_debug_artifacts(driver, prefix="feed_before_cookies")
         
         # Load cookies
         logging.info("Loading cookies...")
@@ -353,6 +409,8 @@ def perform_linkedin_search(job_title, search_params):
         load_cookies(driver, cookies)
         logging.info("Cookies loaded, waiting for page load...")
         time.sleep(5)
+        logging.info(f"Current URL after cookies: {driver.current_url}")
+        capture_debug_artifacts(driver, prefix="feed_after_cookies")
         
         # Now navigate to the search URL
         logging.info("Navigating to search URL...")
@@ -380,30 +438,18 @@ def perform_linkedin_search(job_title, search_params):
     finally:
         if driver:
             try:
-                driver.quit()
+                cleanup_driver(driver)
             except Exception as e:
                 logging.error(f"Error closing driver: {e}")
 
 def setup_driver():
     """Initialize and return Chrome driver with proper settings."""
     try:
-        logging.info("Setting up Chrome options...")
-        
-        # Initialize driver with undetected_chromedriver
-        driver = Driver(uc=True)
-        
-        # Set window size for better job listing visibility
+        logging.info("Setting up Chrome driver via driver_utils...")
+        driver = create_driver(headless=True, profile_name="linkedin_job_search")
         driver.set_window_size(1440, 8000)
-        
-        # Execute stealth JavaScript
-        driver.execute_cdp_cmd('Network.setUserAgentOverride', {
-            "userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        })
-        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-        
         logging.info("Chrome driver initialized successfully")
         return driver
-        
     except Exception as e:
         logging.error(f"Error initializing Chrome driver: {e}")
         raise

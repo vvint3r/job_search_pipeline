@@ -31,3 +31,10 @@ job_search_results/
 *.csv
 *.html
 google-chrome-stable_current_amd64.deb
+# API Keys and Secrets
+*.env
+.env
+.env.local
+*.key
+*secret*
+*api*key*
