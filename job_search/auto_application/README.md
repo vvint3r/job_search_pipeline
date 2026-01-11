@@ -22,6 +22,8 @@ python3 -c "from job_search.auto_application.config import load_config; load_con
 
 This creates `job_search/auto_application/user_config.json`. Edit this file with your information:
 
+Note: `user_config.json` is intentionally gitignored. You can start from `job_search/auto_application/user_config.example.json` and copy it to `user_config.json`.
+
 ```json
 {
   "personal_info": {

@@ -35,6 +35,27 @@ google-chrome-stable_current_amd64.deb
 *.env
 .env
 .env.local
+.env.*
 *.key
+*.pem
+*.p12
+*.pfx
+*.der
+*.crt
+*.cer
 *secret*
 *api*key*
+
+# Service account / credentials files (contain private keys / tokens)
+**/*service-account*.json
+**/*service_account*.json
+**/*credentials*.json
+**/*credential*.json
+
+# Repo-specific secret/config artifacts
+job_search/auto_application/user_config.json
+archives/JobSearch_Pipeline/jobstyr__jsr/devenv_jobstyr/growthalytics-bb8b8f65eee3.json
+
+# Auth cookies / session artifacts
+**/*cookies*.txt
+**/*cookie*.txt
