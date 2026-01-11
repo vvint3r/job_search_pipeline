@@ -1,0 +1,179 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import os
+import csv
+import sys
+import random
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementClickInterceptedException, WebDriverException
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
+from selenium.webdriver import ActionChains
+import logging
+
+# Store credentials securely in environment variables
+APOLLO_EMAIL = os.getenv('APOLLO_EMAIL', 'vasily.souzdenkov@gmail.com')
+APOLLO_PASSWORD = os.getenv('APOLLO_PASSWORD', 'Souzdenkov23!')
+
+# Initialize the WebDriver
+options = webdriver.ChromeOptions()
+# options.add_argument("--headless")
+options.add_argument("--start-maximized")
+options.add_argument("--dns-prefetch-disable")  # Disable DNS prefetching
+options.add_argument("--no-sandbox")  # Helps with some network issues in certain environments
+options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems in Docker environments
+options.add_argument(
+    # Spoof User-Agent
+    "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36")
+options.add_experimental_option("excludeSwitches", ["enable-automation"])
+options.add_experimental_option('useAutomationExtension', False)
+try:
+    driver = webdriver.Chrome(options=options)
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+except Exception as e:
+    print(f"Error initializing WebDriver: {e}")
+    exit(1)
+
+# Open or create CSV file in append mode, and write headers only if the file is new
+output_file = 'apollo_records.csv'
+file_exists = os.path.isfile(output_file)
+with open(output_file, mode='a', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    if not file_exists:
+        writer.writerow(["Name", "Title", "Company", "Email", "Links",
+                        "Location", "# Employees", "Industry", "Keywords"])
+
+try:
+    # Step 1: Navigate to Apollo login page
+    retries = 3
+    for attempt in range(retries):
+        try:
+            driver.get("https://app.apollo.io/#/login")
+            break
+        except WebDriverException as e:
+            if attempt < retries - 1:
+                print(f"Attempt {attempt + 1} failed: {e}. Retrying...")
+                time.sleep(random.uniform(3, 7))  # Randomized delay
+            else:
+                print(f"Failed to load page after {retries} attempts: {e}")
+                driver.quit()
+                exit(1)
+
+    # Step 2: Enter credentials and log in
+    email_input = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "input[name='email'][placeholder='Work Email']"))
+    )
+    email_input.send_keys(APOLLO_EMAIL)
+    time.sleep(random.uniform(1, 3))
+
+    password_input = driver.find_element(By.CSS_SELECTOR, "input[name='password'][placeholder='Enter your password']")
+    password_input.send_keys(APOLLO_PASSWORD)
+    time.sleep(random.uniform(1, 3))
+
+    login_button = driver.find_element(By.CSS_SELECTOR, "button[data-cy='login-button']")
+    ActionChains(driver).move_to_element(login_button).click().perform()
+
+    WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "div[data-tour='prospect_enrich']"))
+    )
+
+    companies_link = WebDriverWait(driver, 20).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "div[data-tour='prospect_enrich'] a#side-nav-companies"))
+    )
+    companies_link.click()
+
+    max_pages = int(os.getenv('MAX_PAGES', 1))
+    page_count = 1
+    total_records = 0
+
+    while page_count <= max_pages:
+        try:
+            print(f"Processing page {page_count}...")
+            # Wait until all rows on the page are present
+            records = WebDriverWait(driver, 10).until(
+                EC.presence_of_all_elements_located((By.XPATH, "//div[contains(@id, 'table-row-')]")
+                                                    ))
+
+            for index in range(len(records)):
+                try:
+                    record_xpath = f"//div[@id='table-row-{index}']"
+                    record = driver.find_element(By.XPATH, record_xpath)
+                    try:
+                        access_button = record.find_element(By.XPATH, ".//button[./span[text()='Access email']]")
+                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", access_button)
+                        time.sleep(random.uniform(10, 30))
+                        driver.execute_script("arguments[0].click();", access_button)
+                        time.sleep(random.uniform(3, 6))
+                    except NoSuchElementException:
+                        pass
+
+                    # Collect data for the record
+                    name = record.find_element(By.XPATH, ".//a[@data-link-variant='default']").text
+                    title = record.find_element(By.XPATH, ".//span[contains(@class, 'zp_xvo3G')]").text
+                    company = record.find_element(By.XPATH, ".//a[@data-link-variant='default']/span").text
+                    try:
+                        email = record.find_element(By.XPATH, ".//span[contains(@class, 'zp_hdyyu')]/span").text
+                    except NoSuchElementException:
+                        email = "N/A"
+
+                    # Updated link extraction logic to handle missing elements
+                    try:
+                        links_element = record.find_element(By.XPATH, ".//a[contains(@href, 'linkedin')]")
+                        links = links_element.get_attribute("href")
+                    except NoSuchElementException:
+                        links = "N/A"
+
+                    # Added safety check to collect location and other fields that might be missing
+                    try:
+                        location = record.find_element(
+                            By.XPATH, ".//span[contains(@class, 'zp_xvo3G') and contains(text(), ',')]").text
+                    except NoSuchElementException:
+                        location = "N/A"
+
+                    try:
+                        employees = record.find_element(By.XPATH, ".//span[contains(@data-count-size, 'small')]").text
+                    except NoSuchElementException:
+                        employees = "N/A"
+
+                    try:
+                        industry = record.find_element(By.XPATH, ".//span[contains(@class, 'zp_CEZf9')]").text
+                    except NoSuchElementException:
+                        industry = "N/A"
+
+                    try:
+                        keywords = record.find_element(
+                            By.XPATH, ".//div[contains(@class, 'zp_ofXB9')]//span[contains(@class, 'zp_CEZf9')]").text
+                    except NoSuchElementException:
+                        keywords = "N/A"
+
+                    # Write data to CSV file
+                    with open(output_file, mode='a', newline='', encoding='utf-8') as file:
+                        writer = csv.writer(file)
+                        writer.writerow([name, title, company, email, links, location, employees, industry, keywords])
+
+                    total_records += 1
+                    print(f"Collected record {total_records}: {name}, {title}, {company}")
+                except NoSuchElementException as e:
+                    print(f"Error processing record {index}: {e}")
+                    continue
+
+            # Step 4: Click the next page button if available
+            next_page_button = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, "//i[contains(@class, 'apollo-icon-chevron-arrow-right')]")
+                                            ))
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", next_page_button)
+            driver.execute_script("arguments[0].click();", next_page_button)
+            time.sleep(random.uniform(10, 30))
+            page_count += 1
+        except (NoSuchElementException, TimeoutException, ElementClickInterceptedException) as e:
+            print(f"No more pages available or an error occurred: {e}")
+            break
+
+    print(f"Total pages processed: {page_count - 1}")
+    print(f"Total records collected: {total_records}")
+
+finally:
+    # Close the driver
+    driver.quit()

@@ -69,6 +69,26 @@ To auto-apply to jobs from a CSV file:
 python3 -m job_search.auto_application.main_apply --csv_file path/to/jobs.csv
 ```
 
+### Extract JD variables for resume optimization
+
+Use the extractor to pull structured variables from a job description (LLM if available, with KeyBERT fallback). Outputs markdown files with incremental IDs in `job_search/auto_application/variables_extracted`.
+
+```bash
+# From raw text file
+python3 -m job_search.auto_application.extract_jd_variables \
+  --job_title "Senior Data Analyst" \
+  --company "ExampleCo" \
+  --description_file /path/to/job_description.txt \
+  --use_llm  # optional, requires OPENAI_API_KEY
+
+# From a CSV (uses job_description/description column; row 0 by default)
+python3 -m job_search.auto_application.extract_jd_variables \
+  --job_title "Senior Data Analyst" \
+  --company "ExampleCo" \
+  --source_csv job_search/job_post_details/analytics/job_details/analytics_job_details_20251113_154244.csv \
+  --row 0
+```
+
 ### Options
 
 - `--csv_file`: (Required) Path to CSV file with job listings (must have `job_url` column)

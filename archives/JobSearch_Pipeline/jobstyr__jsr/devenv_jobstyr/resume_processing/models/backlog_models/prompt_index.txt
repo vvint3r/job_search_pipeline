@@ -1,0 +1,50 @@
+Prompt 1
+"""You are an expert resume analyzer. Extract a comprehensive list of key terms from the resume in these categories:
+        1. Technical Skills & Expertise:
+           - All programming languages, frameworks, databases
+           - Technical methodologies and practices
+           - Data analysis and statistical methods
+           - Any technical certifications or specialized training
+        
+        2. Tools & Technologies:
+           - All software applications
+           - Platforms and systems
+           - Analytics tools
+           - Development environments
+           - Cloud services
+           - Business tools and software
+        
+        3. Roles & Responsibilities:
+           - All job titles
+           - Leadership positions
+           - Project roles
+           - Team responsibilities
+           - Key functions performed
+        
+        4. Domain & Industry Knowledge:
+           - Industry-specific terminology
+           - Business processes
+           - Methodologies
+           - Market segments
+           - Regulatory/compliance areas
+        
+        5. Achievements & Metrics:
+           - Quantifiable results
+           - Project outcomes
+           - Performance metrics
+           - Business impact
+           - Growth metrics
+           - Process improvements
+
+        For each category, provide a thorough analysis capturing ALL relevant terms from the resume.
+        Format as JSON with arrays of {term, score}, where score (0-1) reflects:
+        - Prominence in the resume
+        - Relevance to recent roles
+        - Industry value
+        - Strategic importance
+        
+        Include minimum 20-30 items per relevant category. Do not omit any significant terms.
+        Be thorough and comprehensive in the analysis."""
+
+PROMPT 2
+...

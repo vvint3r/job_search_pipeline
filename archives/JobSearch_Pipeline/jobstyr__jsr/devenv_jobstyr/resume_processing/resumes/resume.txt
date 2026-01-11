@@ -1,0 +1,60 @@
+Vasily Souzdenkov
+Growth Marketing Analytics Leader
+Gilbert, AZ 85295, USA  |  5104586778  |  vasily.souzdenkov@gmail.com
+
+CAREER OVERVIEW
+15 years of experience (8 in management) across growth marketing with analytics engineering - specializing in scaling user acquisition and demand generation across organic marketing and paid performance channels.
+Key Achievements
+Shopify: Increased ROAS by 6.5% by identifying and doubling down on high-converting customer segments using advanced attribution modeling
+Adobe: $800M incremental revenue Y/Y in 2021 above forecast; 30% above target - utilizing a budget of $12M while maintaining CAC at an optimal ~$18
+Credit Sesame: Scaled subscription growth from 10M to 100M plus; with revenue increase of 90% over 5 years; managing an avg. budget of $1.5M monthly
+
+PROFESSIONAL EXPERIENCE
+
+Marketing Analytics Consultant
+Growthstyr (Self-Employed)
+Gilbert, AZ	01/2022 - Present
+Consulted on marketing analytics strategy and data pipelines to build marketing dashboards, attribution models, forecasting, revenue optimization, audience segmentation, and other statistics-based integrations
+Shopify (Client from Q1-Q2 2024)
+Objective; Utilize data mining w/ SQL and Python for data analysis - exploring customer retention metrics, user journey mapping, regression analysis to determine retention and revenue strategies for a/b testing; built dashboards, automated reporting, and insights accessibility for metrics insights
+Results; 12% lift in the overall conversion rate and a 6% net revenue gain Y/Y baselines
+ Course Hero (Client from Q1 - Q4 2023):  Contract focused on Marketing Dashboards, 
+Objective; Building advanced analytics and reporting frameworks for SEO, customer segmentation, revenue optimization, user funnel analysis, a/b testing automation, and user acquisition insights to improve  conversion rate optimization
+Results; Increased landing page CTR to 60% (from 35%) from an increase in avg. (weighted) search rankings change from 3.2 to 1.6 over 3 months; avg. conversion rates in funnel by 36.8% Y/Y
+
+
+Senior Manager Growth Marketing Analytics
+Adobe
+San Jose, CA	01/2019 - 01/2022
+(Employee) Scaled marketing growth and analytics environment - driving organic acquisition from 6% to 14% revenue share; managed team of 3 data analysts, 1 data scientist, 2 attached engineers, 1 UI/UX designer (contractor)
+Utilized landing page optimization and targeted content adjustments for SEO; improved avg. weighted keyword cohort from 15 to 3 in 6 months and increased traffic Y/Y from 12% to 52%; increase in net Organic (SEO) revenue by 16% Y/Y
+9.5% global traffic growth Y/Y (4.8% above target); cross-collaboration with product teams resulted in an increase in conversion rates by an avg. of 14% (weighted) Y/Y across paid media channels
+
+Director Marketing Analytics
+Credit Sesame
+San Francisco, CA	01/2012 - 01/2019
+(Employee) Developed the marketing analytics strategy and team; focusing on performance tracking, attribution modeling, metrics tracking, split testing optimization, and  general automation
+Developed and implemented Credit Sesame's marketing analytics strategy, building a high-performing team and driving significant improvements in marketing ROI (15% increase) and organic acquisition share (8.5% to 20%) through data-driven initiatives, including predictive CLV modeling, attribution modeling, and A/B testing optimization.    
+Achieved a $5M revenue increase within 12 months through predictive CLV modeling and significantly scaled organic traffic growth by securing the #1 keyword ranking for "free credit score" and leveraging a network of 85 publishers
+
+Marketing Analyst Consultant
+Independent Consultant
+Toronto, ON, Canada	01/2009 - 01/2012
+
+SKILLS & UTILITIES
+
+Management & Leadership - Strategic Thinking · Operations Process Improvement · Problem Solving · Critical Thinking · Team Mentoring · Team Leadership
+Analytics Engineering & Management -  Customer Acquisition Cost (CAC) Optimization · KPI Reports · Statistical Modeling · Data Storytelling · ETL · Marketing Reporting · Executive Reporting · Cross-functional Initiatives · Target Audience · Performance Dashboards · Data Models · Data Mining · Funnel Optimization · Audience Segmentation · Lifetime Value (LTV) Modeling · Machine Learning · Performance Metrics · Customer Journey Analysis · Data Processing · Channel Mix Optimization · Data Analysis · Causal Inference · Predictive Modeling · Regression Analysis · Analytical Modelling · Conversation Analysis · Attribution Modeling · Marketing Analytics
+
+Organic Growth Acquisition & Performance Marketing -  Marketing Automation · Content Marketing · Marketing Strategy · Marketing Leadership · Marketing Mix · Marketing Budget Management · Market Research · Conversion Testing · Competitive 
+Analysis · Brand Strategy · Content Strategy · Affiliate Management · PR · Content Management · Mobile Marketing · Search Engine Marketing · Social Media Marketing · Email Marketing · A/B Testing · Referral Marketing · Search Engine Optimization (SEO)
+Technical Skills - AWS · Google Cloud · Airflow · Docker · JQuery · S3 · SQL · Tableau · API · Scikit-Learn · React.js · Angular · SQLite · Pandas · NumPy · Bash · BigQuery · CSS · Node.js · HTML · MongoDB · Amazon Redshift · Javascript · MySQL · Shell Scripting · Python
+Tools & Utilities - Marketo · Google Ads · Meltwater · SEMrush · HubSpot · Optimizely · Google Search Console · Google Analytics · Power BI · Screaming Frog · BrightEdge · Facebook Ads · Ahrefs
+
+EDUCATION
+Master’s Degree
+Statistics	
+Arizona State University	01/2019-01/2021
+Bachelor's Degree
+Information Technology
+York University	01/2011-01/2015
